@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Eletricidade — Fácil, Médio, Difícil e Desafio</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#0b1020;color:#e7ecf7;
+ min-height:100vh;display:flex;justify-content:center;padding:16px;
+ background-image:radial-gradient(600px 300px at 15% 0%,rgba(56,189,248,.10),transparent 60%),radial-gradient(600px 300px at 90% 0%,rgba(247,201,72,.08),transparent 60%)}
+.app{width:100%;max-width:680px}
+.oculta{display:none}
+.card{background:#141d38;border:1px solid rgba(120,150,255,.18);border-radius:16px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.35);margin-bottom:14px}
+.logo{text-align:center;margin:14px 0 18px}
+.logo .raio{font-size:2.6rem}
+.logo h1{font-size:1.6rem;letter-spacing:1px}
+.logo h1 b{color:#f7c948}
+.logo p{color:#8fa0c2;font-size:.92rem;margin-top:4px}
+.btn{border:none;border-radius:12px;padding:14px 22px;font-weight:700;font-size:1rem;cursor:pointer;min-height:48px;transition:transform .12s,filter .12s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn-amarelo{background:linear-gradient(135deg,#f7c948,#f59e0b);color:#221a02;width:100%}
+.btn-contorno{background:transparent;color:#e7ecf7;border:2px solid rgba(120,150,255,.3);width:100%}
+.linha-btns{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.linha-btns .btn{flex:1;width:auto}
+.campo{width:100%;padding:14px;border-radius:12px;border:2px solid rgba(120,150,255,.3);background:#1a2547;color:#e7ecf7;font-size:1.05rem;margin:10px 0 16px}
+.modos{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.modo{display:block;width:100%;text-align:left;padding:18px;border-radius:14px;cursor:pointer;color:#e7ecf7;
+ background:#1a2547;border:2px solid rgba(120,150,255,.18);transition:transform .12s,border-color .12s}
+.modo:hover{transform:translateY(-3px)}
+.modo .tit{font-size:1.15rem;font-weight:800;display:flex;align-items:center;gap:8px}
+.modo .tit small{font-weight:600;color:#8fa0c2;font-size:.8rem}
+.modo p{color:#8fa0c2;font-size:.88rem;margin:6px 0 8px;line-height:1.45}
+.modo .info{font-size:.8rem;font-weight:700;padding:4px 10px;border-radius:99px;background:#141d38;border:1px solid rgba(120,150,255,.18)}
+.modo-facil{border-color:rgba(34,197,94,.5)}.modo-facil:hover{border-color:#22c55e}.modo-facil .tit{color:#22c55e}
+.modo-medio{border-color:rgba(245,158,11,.5)}.modo-medio:hover{border-color:#f59e0b}.modo-medio .tit{color:#f59e0b}
+.modo-dificil{border-color:rgba(239,68,68,.5)}.modo-dificil:hover{border-color:#ef4444}.modo-dificil .tit{color:#ef4444}
+.modo-desafio{border-color:rgba(56,189,248,.5)}.modo-desafio:hover{border-color:#38bdf8}.modo-desafio .tit{color:#38bdf8}
+.topo{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:.9rem;font-weight:600}
+.chip{background:#1a2547;border:1px solid rgba(120,150,255,.18);border-radius:99px;padding:6px 12px}
+.chip.pts{color:#f7c948}
+.chip.tempo{color:#38bdf8;font-variant-numeric:tabular-nums}
+.chip.mfacil{color:#22c55e;border-color:rgba(34,197,94,.4)}
+.chip.mmedio{color:#f59e0b;border-color:rgba(245,158,11,.4)}
+.chip.mdificil{color:#ef4444;border-color:rgba(239,68,68,.4)}
+.chip.mdesafio{color:#38bdf8;border-color:rgba(56,189,248,.4)}
+.chip.mrevisao{color:#8fa0c2;border-color:rgba(120,150,255,.4)}
+.barra{height:10px;background:#1a2547;border-radius:99px;overflow:hidden;margin-bottom:16px;border:1px solid rgba(120,150,255,.18)}
+.barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f7c948,#38bdf8);transition:width .3s}
+.qimg{margin-bottom:14px;padding:10px;background:#101832;border:1px solid rgba(120,150,255,.18);border-radius:12px}
+.qimg svg{width:100%;max-width:430px;height:auto;display:block;margin:0 auto}
+.pergunta{font-size:1.12rem;line-height:1.5;margin-bottom:16px}
+.opcoes{display:flex;flex-direction:column;gap:10px}
+.opcao{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:13px 14px;border-radius:12px;
+ background:#1a2547;border:2px solid rgba(120,150,255,.18);color:#e7ecf7;font-size:.97rem;cursor:pointer;min-height:52px;transition:border-color .12s}
+.opcao:hover:not(:disabled){border-color:#38bdf8}
+.opcao:disabled{cursor:default}
+.opcao .letra{flex:0 0 30px;height:30px;border-radius:8px;background:#141d38;border:1px solid rgba(120,150,255,.18);
+ display:flex;align-items:center;justify-content:center;font-weight:800}
+.opcao.certa{background:rgba(34,197,94,.14);border-color:#22c55e}
+.opcao.certa .letra{background:#22c55e;color:#fff;border-color:#22c55e}
+.opcao.errada{background:rgba(239,68,68,.14);border-color:#ef4444}
+.opcao.errada .letra{background:#ef4444;color:#fff;border-color:#ef4444}
+.opcao.fraca{opacity:.5}
+.feedback{margin-top:14px;padding:14px;border-radius:12px;background:#1a2547;border:1px solid rgba(120,150,255,.18);font-size:.93rem;line-height:1.55}
+.feedback .status{font-weight:800;margin-bottom:6px}
+.feedback .status.ok{color:#22c55e}
+.feedback .status.erro{color:#ef4444}
+.feedback .ref{color:#8fa0c2;font-size:.8rem;margin-top:6px}
+.acoes{margin-top:16px;display:flex;justify-content:flex-end}
+.resultado{text-align:center}
+.resultado .pct{font-size:3rem;font-weight:900;color:#f7c948}
+.resultado .classif{display:inline-block;margin:8px 0 14px;padding:8px 20px;border-radius:99px;font-weight:800;border:2px solid #f7c948;color:#f7c948}
+.resultado .recorde{margin:4px 0 10px;font-weight:700;color:#38bdf8}
+.grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin:14px 0}
+.item{background:#1a2547;border:1px solid rgba(120,150,255,.18);border-radius:10px;padding:12px}
+.item b{display:block;font-size:1.2rem}
+.item span{font-size:.75rem;color:#8fa0c2}
+.rodape{color:#8fa0c2;font-size:.75rem;text-align:center;margin:14px 6px 30px;line-height:1.5}
+@media(max-width:480px){.pergunta{font-size:1.02rem}.card{padding:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TELA: NOME DO ALUNO -->
+  <div id="tela-nome">
+    <div class="logo">
+      <div class="raio">⚡</div>
+      <h1>ELETRIC <b>QUIZ</b></h1>
+      <p>Eletricidade e Eletrônica Básica</p>
+    </div>
+    <div class="card">
+      <h2 style="margin-bottom:6px">Bem-vindo(a)! 👋</h2>
+      <p style="color:#8fa0c2">Digite seu nome para começar:</p>
+      <input id="inpNome" class="campo" maxlength="30" placeholder="Ex.: Maria Silva" autocomplete="off">
+      <button class="btn btn-amarelo" onclick="entrar()">▶ ENTRAR</button>
+      <div class="linha-btns"><button class="btn btn-contorno somtoggle" onclick="somToggle()"></button></div>
+    </div>
+  </div>
+
+  <!-- TELA INICIAL -->
+  <div id="tela-inicio" class="oculta">
+    <div class="logo">
+      <div class="raio">⚡</div>
+      <h1>ELETRIC <b>QUIZ</b></h1>
+      <p id="ola">Escolha o seu nível</p>
+    </div>
+    <div class="card">
+      <div class="modos">
+        <button class="modo modo-facil" onclick="iniciar('facil')">
+          <span class="tit">🟢 FÁCIL <small>(Iniciante)</small></span>
+          <p>Definições diretas: eletrostática, tensão, corrente, resistência, componentes e segurança.</p>
+          <span class="info" id="info-facil"></span>
+        </button>
+        <button class="modo modo-medio" onclick="iniciar('medio')">
+          <span class="tit">🟡 MÉDIO <small>(Intermediário)</small></span>
+          <p>Aplicação prática: multímetro, baterias, curtos, circuitos série/paralelo, instalação e NBR-5410.</p>
+          <span class="info" id="info-medio"></span>
+        </button>
+        <button class="modo modo-dificil" onclick="iniciar('dificil')">
+          <span class="tit">🔴 DIFÍCIL <small>(Avançado)</small></span>
+          <p>Cálculos e interpretação: Leis de Ohm, potência, Vp/Vpp, Req, tolerâncias e defeitos.</p>
+          <span class="info" id="info-dificil"></span>
+        </button>
+        <button class="modo modo-desafio" onclick="iniciar('desafio')">
+          <span class="tit">🔵 DESAFIO <small>(Misto — os 3 níveis)</small></span>
+          <p>Sorteia questões dos três bancos ao mesmo tempo, com cronômetro mais apertado.</p>
+          <span class="info" id="info-desafio"></span>
+        </button>
+      </div>
+      <div class="linha-btns">
+        <button id="btnRevTudo" class="btn btn-contorno" onclick="revisarSalvos()">📕 Revisar erros salvos</button>
+        <button class="btn btn-contorno somtoggle" onclick="somToggle()"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA DO QUIZ -->
+  <div id="tela-quiz" class="oculta">
+    <div class="topo">
+      <span class="chip" id="chipModo"></span>
+      <span class="chip" id="contador">Questão 1/33</span>
+      <span class="chip tempo" id="tempo">⏱ 00:00</span>
+      <span class="chip pts" id="pontos">0 pts</span>
+    </div>
+    <div class="barra"><i id="barra"></i></div>
+    <div class="card">
+      <div class="qimg" id="quizImg"></div>
+      <div class="pergunta" id="pergunta"></div>
+      <div class="opcoes" id="opcoes"></div>
+      <div class="feedback oculta" id="feedback"></div>
+      <div class="acoes">
+        <button class="btn btn-amarelo oculta" id="btnProxima" style="width:auto" onclick="proxima()">PRÓXIMA ➜</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA FINAL -->
+  <div id="tela-fim" class="oculta">
+    <div class="card resultado">
+      <h1 style="margin-bottom:6px">🎉 Quiz finalizado!</h1>
+      <p id="fimAluno" style="color:#8fa0c2"></p>
+      <p id="fimModo" style="color:#8fa0c2;margin-bottom:8px"></p>
+      <div class="pct" id="fimPct">0%</div>
+      <div class="classif" id="fimClassif"></div>
+      <div class="recorde" id="fimRecorde"></div>
+      <div class="grade">
+        <div class="item"><b id="fimAcertos"></b><span>Acertos</span></div>
+        <div class="item"><b id="fimErros"></b><span>Erros</span></div>
+        <div class="item"><b id="fimPontos"></b><span>Pontos</span></div>
+        <div class="item"><b id="fimTempo"></b><span>Tempo</span></div>
+      </div>
+      <button id="btnNovamente" class="btn btn-amarelo" onclick="jogarNovamente()">🔁 JOGAR NOVAMENTE (MESMO MODO)</button>
+      <button id="btnRevSessao" class="btn btn-contorno oculta" style="margin-top:10px" onclick="revisarSessao()">🔄 REVISAR ERROS DA PARTIDA</button>
+      <button class="btn btn-contorno" style="margin-top:10px" onclick="exportarPNG()">📸 EXPORTAR RESULTADO (PNG)</button>
+      <button class="btn btn-contorno" style="margin-top:10px" onclick="voltarInicio()">🎮 ESCOLHER OUTRO MODO</button>
+    </div>
+  </div>
+
+  <div class="rodape">
+    Conteúdo baseado nas apostilas “AP ELETRICIDADE.pdf” e “Apostila.pdf” — Eletricidade Básica (Leiaut Carielo).<br>
+    ⚠️ Aplicativo educacional: trabalhos em instalações elétricas reais devem ser feitos por profissional qualificado.
+  </div>
+</div>
+
+<script>
+"use strict";
+window.addEventListener("error",function(e){
+ var d=document.getElementById("eq-error");
+ if(!d){d=document.createElement("div");d.id="eq-error";
+  d.style.cssText="position:fixed;top:0;left:0;right:0;z-index:99999;background:#b91c1c;color:#fff;padding:10px 14px;font:12px monospace";
+  document.body.appendChild(d);}
+ d.textContent="Erro: "+e.message+" (linha "+e.lineno+")";
+});
+
+/* ==================== DIAGRAMAS SVG (sem nenhuma dica de resposta) ==================== */
+var IMG={};
+IMG.atomo='<svg viewBox="0 0 320 180"><circle cx="160" cy="90" r="72" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="5 5"/><circle cx="160" cy="90" r="28" fill="none" stroke="#8fa0c2" stroke-width="2"/><circle cx="150" cy="84" r="6" fill="#f87171"/><circle cx="170" cy="84" r="6" fill="#f87171"/><circle cx="150" cy="98" r="6" fill="#8fa0c2"/><circle cx="170" cy="98" r="6" fill="#8fa0c2"/><circle cx="222" cy="54" r="7" fill="#38bdf8"/><circle cx="98" cy="126" r="7" fill="#38bdf8"/><circle cx="160" cy="18" r="7" fill="#38bdf8"/></svg>';
+IMG.esferas='<svg viewBox="0 0 320 140"><circle cx="105" cy="70" r="34" fill="none" stroke="#e7ecf7" stroke-width="2"/><circle cx="185" cy="70" r="34" fill="none" stroke="#e7ecf7" stroke-width="2"/><path d="M235 70 L265 70" stroke="#8fa0c2" stroke-width="2" stroke-dasharray="4 3"/><polygon points="265,65 275,70 265,75" fill="#8fa0c2"/></svg>';
+IMG.atrito='<svg viewBox="0 0 320 140"><rect x="70" y="50" width="80" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="2"/><rect x="170" y="50" width="80" height="40" rx="6" fill="none" stroke="#38bdf8" stroke-width="2"/><path d="M100 35 q10 -8 20 0" stroke="#8fa0c2" stroke-width="2" fill="none"/><path d="M190 35 q10 -8 20 0" stroke="#8fa0c2" stroke-width="2" fill="none"/><path d="M150 70 L170 70" stroke="#8fa0c2" stroke-width="2" stroke-dasharray="3 3"/></svg>';
+IMG.inducao='<svg viewBox="0 0 320 150"><rect x="40" y="45" width="70" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="2"/><rect x="150" y="45" width="70" height="40" rx="6" fill="none" stroke="#e7ecf7" stroke-width="2"/><path d="M110 65 L150 65" stroke="#8fa0c2" stroke-width="2" stroke-dasharray="4 3"/><polygon points="145,60 155,65 145,70" fill="#8fa0c2"/><line x1="185" y1="85" x2="185" y2="112" stroke="#8fa0c2" stroke-width="2"/><g stroke="#8fa0c2" stroke-width="3"><line x1="167" y1="112" x2="203" y2="112"/><line x1="173" y1="120" x2="197" y2="120"/><line x1="179" y1="128" x2="191" y2="128"/></g></svg>';
+IMG.onda='<svg viewBox="0 0 320 180"><line x1="10" y1="90" x2="310" y2="90" stroke="#7d8db0" stroke-width="1" stroke-dasharray="4 4"/><path d="M20 90 A40 50 0 0 1 100 90 A40 50 0 0 0 180 90 A40 50 0 0 1 260 90" fill="none" stroke="#38bdf8" stroke-width="3"/><line x1="60" y1="40" x2="60" y2="90" stroke="#f7c948" stroke-width="2"/><text x="66" y="68" font-size="12" fill="#f7c948">Vp</text><line x1="220" y1="40" x2="220" y2="140" stroke="#22c55e" stroke-width="2"/><text x="226" y="95" font-size="12" fill="#22c55e">Vpp</text></svg>';
+IMG.ondaDC='<svg viewBox="0 0 320 140"><line x1="10" y1="100" x2="310" y2="100" stroke="#7d8db0" stroke-width="1" stroke-dasharray="4 4"/><line x1="20" y1="50" x2="300" y2="50" stroke="#38bdf8" stroke-width="3"/></svg>';
+IMG.pendulo='<svg viewBox="0 0 320 170"><line x1="215" y1="15" x2="215" y2="66" stroke="#7d8db0" stroke-width="2"/><circle cx="215" cy="86" r="19" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="45" y1="122" x2="150" y2="88" stroke="#f59e0b" stroke-width="7" stroke-linecap="round"/></svg>';
+IMG.agua='<svg viewBox="0 0 320 170"><line x1="250" y1="12" x2="250" y2="45" stroke="#8fa0c2" stroke-width="9"/><line x1="250" y1="50" x2="250" y2="150" stroke="#38bdf8" stroke-width="3"/><line x1="85" y1="110" x2="190" y2="90" stroke="#f59e0b" stroke-width="7" stroke-linecap="round"/></svg>';
+IMG.pilhaSerie='<svg viewBox="0 0 320 140"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="34" y1="70" x2="90" y2="70"/><line x1="104" y1="70" x2="150" y2="70"/><line x1="164" y1="70" x2="226" y2="70"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="90" y1="58" x2="90" y2="82"/><line x1="104" y1="50" x2="104" y2="90"/><line x1="150" y1="58" x2="150" y2="82"/><line x1="164" y1="50" x2="164" y2="90"/></g><text x="97" y="112" text-anchor="middle" font-size="11" fill="#8fa0c2">9 V</text><text x="157" y="112" text-anchor="middle" font-size="11" fill="#8fa0c2">9 V</text></svg>';
+IMG.pilhaParalelo='<svg viewBox="0 0 320 160"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="60" y1="50" x2="110" y2="50"/><line x1="124" y1="50" x2="210" y2="50"/><line x1="60" y1="110" x2="110" y2="110"/><line x1="124" y1="110" x2="210" y2="110"/><line x1="60" y1="50" x2="60" y2="110"/><line x1="210" y1="50" x2="210" y2="110"/><line x1="30" y1="80" x2="60" y2="80"/><line x1="210" y1="80" x2="246" y2="80"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="110" y1="38" x2="110" y2="62"/><line x1="124" y1="32" x2="124" y2="68"/><line x1="110" y1="98" x2="110" y2="122"/><line x1="124" y1="92" x2="124" y2="128"/></g><text x="117" y="24" text-anchor="middle" font-size="11" fill="#8fa0c2">9 V</text><text x="117" y="146" text-anchor="middle" font-size="11" fill="#8fa0c2">9 V</text></svg>';
+IMG.bateria='<svg viewBox="0 0 320 160"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="130" y1="45" x2="130" y2="66"/><line x1="130" y1="82" x2="130" y2="110"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="112" y1="66" x2="148" y2="66"/><line x1="120" y1="82" x2="140" y2="82"/></g><text x="156" y="62" font-size="13" fill="#8fa0c2">+</text><text x="156" y="92" font-size="13" fill="#8fa0c2">−</text><text x="86" y="78" font-size="12" fill="#f7c948" text-anchor="middle">12 V</text></svg>';
+IMG.fonte='<svg viewBox="0 0 320 130"><line x1="30" y1="65" x2="95" y2="65" stroke="#7d8db0" stroke-width="2"/><rect x="95" y="35" width="130" height="60" rx="8" fill="none" stroke="#e7ecf7" stroke-width="2"/><text x="160" y="70" text-anchor="middle" font-size="12" fill="#8fa0c2">FONTE</text><line x1="225" y1="65" x2="290" y2="65" stroke="#7d8db0" stroke-width="2"/></svg>';
+IMG.circuitoSimples='<svg viewBox="0 0 320 190"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="40" y1="50" x2="40" y2="78"/><line x1="40" y1="94" x2="40" y2="165"/><line x1="40" y1="50" x2="120" y2="50"/><line x1="178" y1="50" x2="280" y2="50"/><line x1="280" y1="50" x2="280" y2="72"/><line x1="280" y1="110" x2="280" y2="165"/><line x1="40" y1="165" x2="280" y2="165"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="24" y1="78" x2="56" y2="78"/><line x1="32" y1="94" x2="48" y2="94"/></g><circle cx="122" cy="50" r="3" fill="#e7ecf7"/><circle cx="176" cy="50" r="3" fill="#e7ecf7"/><line x1="122" y1="50" x2="172" y2="32" stroke="#e7ecf7" stroke-width="3"/><circle cx="280" cy="91" r="19" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="267" y1="78" x2="293" y2="104" stroke="#e7ecf7" stroke-width="2"/><line x1="293" y1="78" x2="267" y2="104" stroke="#e7ecf7" stroke-width="2"/><text x="62" y="74" font-size="13" fill="#8fa0c2">+</text><text x="148" y="22" text-anchor="middle" font-size="11" fill="#8fa0c2">interruptor</text><text x="252" y="95" text-anchor="end" font-size="11" fill="#8fa0c2">L1</text><text x="10" y="128" font-size="11" fill="#f7c948">12 V</text></svg>';
+IMG.resistor='<svg viewBox="0 0 320 110"><line x1="20" y1="55" x2="110" y2="55" stroke="#7d8db0" stroke-width="2"/><rect x="110" y="40" width="100" height="30" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="210" y1="55" x2="300" y2="55" stroke="#7d8db0" stroke-width="2"/><text x="160" y="30" text-anchor="middle" font-size="12" fill="#f7c948">R</text></svg>';
+IMG.ledResistor='<svg viewBox="0 0 320 190"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="40" y1="50" x2="40" y2="78"/><line x1="40" y1="94" x2="40" y2="165"/><line x1="40" y1="50" x2="95" y2="50"/><line x1="145" y1="50" x2="195" y2="50"/><line x1="219" y1="50" x2="280" y2="50"/><line x1="280" y1="50" x2="280" y2="165"/><line x1="40" y1="165" x2="280" y2="165"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="24" y1="78" x2="56" y2="78"/><line x1="32" y1="94" x2="48" y2="94"/></g><rect x="95" y="42" width="50" height="16" fill="none" stroke="#e7ecf7" stroke-width="2"/><polygon points="195,38 195,62 219,50" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="219" y1="38" x2="219" y2="62" stroke="#e7ecf7" stroke-width="3"/><line x1="205" y1="30" x2="213" y2="22" stroke="#f7c948" stroke-width="2"/><line x1="212" y1="36" x2="220" y2="28" stroke="#f7c948" stroke-width="2"/><text x="10" y="128" font-size="11" fill="#f7c948">9 V</text><text x="120" y="30" text-anchor="middle" font-size="11" fill="#8fa0c2">R</text><text x="207" y="88" text-anchor="middle" font-size="11" fill="#8fa0c2">LED</text></svg>';
+IMG.serieMedidas='<svg viewBox="0 0 320 190"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="40" y1="50" x2="40" y2="78"/><line x1="40" y1="94" x2="40" y2="165"/><line x1="40" y1="50" x2="95" y2="50"/><line x1="145" y1="50" x2="195" y2="50"/><line x1="219" y1="50" x2="280" y2="50"/><line x1="280" y1="50" x2="280" y2="165"/><line x1="40" y1="165" x2="280" y2="165"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="24" y1="78" x2="56" y2="78"/><line x1="32" y1="94" x2="48" y2="94"/></g><rect x="95" y="42" width="50" height="16" fill="none" stroke="#e7ecf7" stroke-width="2"/><polygon points="195,38 195,62 219,50" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="219" y1="38" x2="219" y2="62" stroke="#e7ecf7" stroke-width="3"/><text x="120" y="30" text-anchor="middle" font-size="11" fill="#f7c948">7,45 V</text><text x="207" y="88" text-anchor="middle" font-size="11" fill="#f7c948">1,95 V</text><text x="8" y="128" font-size="11" fill="#38bdf8">9,37 V</text></svg>';
+IMG.curtoBateria='<svg viewBox="0 0 320 180"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="60" y1="60" x2="60" y2="84"/><line x1="60" y1="100" x2="60" y2="150"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="44" y1="84" x2="76" y2="84"/><line x1="52" y1="100" x2="68" y2="100"/></g><path d="M60 60 L260 60 L260 150 L60 150" fill="none" stroke="#ef4444" stroke-width="3"/><text x="160" y="45" text-anchor="middle" font-size="18" fill="#f7c948">⚡</text></svg>';
+IMG.curtoResistor='<svg viewBox="0 0 320 200"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="40" y1="55" x2="40" y2="80"/><line x1="40" y1="96" x2="40" y2="170"/><line x1="40" y1="55" x2="95" y2="55"/><line x1="145" y1="55" x2="195" y2="55"/><line x1="219" y1="55" x2="280" y2="55"/><line x1="280" y1="55" x2="280" y2="170"/><line x1="40" y1="170" x2="280" y2="170"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="24" y1="80" x2="56" y2="80"/><line x1="32" y1="96" x2="48" y2="96"/></g><rect x="95" y="47" width="50" height="16" fill="none" stroke="#e7ecf7" stroke-width="2"/><polygon points="195,43 195,67 219,55" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="219" y1="43" x2="219" y2="67" stroke="#e7ecf7" stroke-width="3"/><path d="M95 55 L95 28 L145 28 L145 55" fill="none" stroke="#ef4444" stroke-width="3"/><text x="120" y="20" text-anchor="middle" font-size="10" fill="#ef4444">curto</text><text x="14" y="128" font-size="11" fill="#f7c948">9 V</text><text x="207" y="92" text-anchor="middle" font-size="11" fill="#8fa0c2">LED</text></svg>';
+IMG.curtoLED='<svg viewBox="0 0 320 200"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="40" y1="55" x2="40" y2="80"/><line x1="40" y1="96" x2="40" y2="170"/><line x1="40" y1="55" x2="95" y2="55"/><line x1="145" y1="55" x2="195" y2="55"/><line x1="219" y1="55" x2="280" y2="55"/><line x1="280" y1="55" x2="280" y2="170"/><line x1="40" y1="170" x2="280" y2="170"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="24" y1="80" x2="56" y2="80"/><line x1="32" y1="96" x2="48" y2="96"/></g><rect x="95" y="47" width="50" height="16" fill="none" stroke="#e7ecf7" stroke-width="2"/><polygon points="195,43 195,67 219,55" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="219" y1="43" x2="219" y2="67" stroke="#e7ecf7" stroke-width="3"/><path d="M195 55 L195 28 L219 28 L219 55" fill="none" stroke="#ef4444" stroke-width="3"/><text x="207" y="20" text-anchor="middle" font-size="10" fill="#ef4444">curto</text><text x="120" y="34" text-anchor="middle" font-size="11" fill="#8fa0c2">R</text><text x="14" y="128" font-size="11" fill="#f7c948">9 V</text></svg>';
+IMG.serie3='<svg viewBox="0 0 320 185"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="30" y1="50" x2="30" y2="78"/><line x1="30" y1="94" x2="30" y2="160"/><line x1="30" y1="50" x2="78" y2="50"/><line x1="112" y1="50" x2="158" y2="50"/><line x1="192" y1="50" x2="238" y2="50"/><line x1="272" y1="50" x2="290" y2="50"/><line x1="290" y1="50" x2="290" y2="160"/><line x1="290" y1="160" x2="30" y2="160"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="14" y1="78" x2="46" y2="78"/><line x1="22" y1="94" x2="38" y2="94"/></g><g stroke="#e7ecf7" stroke-width="2" fill="none"><circle cx="95" cy="50" r="17"/><line x1="83" y1="38" x2="107" y2="62"/><line x1="107" y1="38" x2="83" y2="62"/><circle cx="175" cy="50" r="17"/><line x1="163" y1="38" x2="187" y2="62"/><line x1="187" y1="38" x2="163" y2="62"/><circle cx="255" cy="50" r="17"/><line x1="243" y1="38" x2="267" y2="62"/><line x1="267" y1="38" x2="243" y2="62"/></g><text x="95" y="20" text-anchor="middle" font-size="11" fill="#8fa0c2">L1</text><text x="175" y="20" text-anchor="middle" font-size="11" fill="#8fa0c2">L2</text><text x="255" y="20" text-anchor="middle" font-size="11" fill="#8fa0c2">L3</text></svg>';
+IMG.paralelo3='<svg viewBox="0 0 320 190"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="30" y1="40" x2="30" y2="78"/><line x1="30" y1="94" x2="30" y2="170"/><line x1="30" y1="40" x2="290" y2="40"/><line x1="30" y1="170" x2="290" y2="170"/><line x1="290" y1="40" x2="290" y2="170"/><line x1="100" y1="40" x2="100" y2="72"/><line x1="100" y1="108" x2="100" y2="170"/><line x1="170" y1="40" x2="170" y2="72"/><line x1="170" y1="108" x2="170" y2="170"/><line x1="240" y1="40" x2="240" y2="72"/><line x1="240" y1="108" x2="240" y2="170"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="14" y1="78" x2="46" y2="78"/><line x1="22" y1="94" x2="38" y2="94"/></g><g stroke="#e7ecf7" stroke-width="2" fill="none"><circle cx="100" cy="90" r="18"/><line x1="87" y1="77" x2="113" y2="103"/><line x1="113" y1="77" x2="87" y2="103"/><circle cx="170" cy="90" r="18"/><line x1="157" y1="77" x2="183" y2="103"/><line x1="183" y1="77" x2="157" y2="103"/><circle cx="240" cy="90" r="18"/><line x1="227" y1="77" x2="253" y2="103"/><line x1="253" y1="77" x2="227" y2="103"/></g><text x="100" y="28" text-anchor="middle" font-size="11" fill="#8fa0c2">L1</text><text x="170" y="28" text-anchor="middle" font-size="11" fill="#8fa0c2">L2</text><text x="240" y="28" text-anchor="middle" font-size="11" fill="#8fa0c2">L3</text></svg>';
+IMG.misto='<svg viewBox="0 0 320 185"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="30" y1="40" x2="30" y2="78"/><line x1="30" y1="94" x2="30" y2="160"/><line x1="30" y1="40" x2="70" y2="40"/><line x1="120" y1="40" x2="150" y2="40"/><line x1="150" y1="40" x2="200" y2="40"/><line x1="250" y1="40" x2="285" y2="40"/><line x1="150" y1="40" x2="150" y2="105"/><line x1="150" y1="105" x2="200" y2="105"/><line x1="250" y1="105" x2="285" y2="105"/><line x1="285" y1="40" x2="285" y2="160"/><line x1="285" y1="160" x2="30" y2="160"/></g><g stroke="#e7ecf7" stroke-width="3"><line x1="14" y1="78" x2="46" y2="78"/><line x1="22" y1="94" x2="38" y2="94"/></g><g fill="none" stroke="#e7ecf7" stroke-width="2"><rect x="70" y="32" width="50" height="16"/><rect x="200" y="32" width="50" height="16"/><rect x="200" y="97" width="50" height="16"/></g><circle cx="150" cy="40" r="3.5" fill="#e7ecf7"/><circle cx="285" cy="105" r="3.5" fill="#e7ecf7"/><text x="95" y="24" text-anchor="middle" font-size="11" fill="#8fa0c2">R1</text><text x="225" y="24" text-anchor="middle" font-size="11" fill="#8fa0c2">R2</text><text x="225" y="89" text-anchor="middle" font-size="11" fill="#8fa0c2">R3</text></svg>';
+IMG.multimetro='<svg viewBox="0 0 320 170"><rect x="110" y="15" width="100" height="120" rx="12" fill="none" stroke="#e7ecf7" stroke-width="2"/><rect x="125" y="28" width="70" height="30" rx="4" fill="#101832" stroke="#8fa0c2" stroke-width="1"/><circle cx="160" cy="95" r="22" fill="none" stroke="#8fa0c2" stroke-width="2"/><line x1="160" y1="95" x2="174" y2="80" stroke="#f7c948" stroke-width="2"/><line x1="120" y1="135" x2="80" y2="160" stroke="#ef4444" stroke-width="3"/><line x1="200" y1="135" x2="240" y2="160" stroke="#cbd5e1" stroke-width="3"/></svg>';
+IMG.continuidade='<svg viewBox="0 0 320 150"><g stroke="#7d8db0" stroke-width="2" fill="none"><line x1="55" y1="60" x2="110" y2="60"/><line x1="210" y1="60" x2="265" y2="60"/></g><rect x="110" y="48" width="100" height="24" rx="8" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="110" y1="60" x2="210" y2="60" stroke="#e7ecf7" stroke-width="2"/><line x1="243" y1="26" x2="214" y2="50" stroke="#ef4444" stroke-width="4"/><line x1="77" y1="26" x2="106" y2="50" stroke="#cbd5e1" stroke-width="4"/><text x="160" y="18" text-anchor="middle" font-size="10" fill="#8fa0c2">fusível</text><rect x="120" y="95" width="80" height="32" rx="6" fill="#101832" stroke="#8fa0c2" stroke-width="2"/><text x="160" y="117" text-anchor="middle" font-size="14" fill="#22c55e">•)))</text></svg>';
+IMG.interruptor='<svg viewBox="0 0 320 180"><circle cx="30" cy="95" r="16" fill="none" stroke="#e7ecf7" stroke-width="2"/><text x="30" y="101" text-anchor="middle" font-size="14" fill="#f7c948">~</text><path d="M30 79 L30 45 L110 45" fill="none" stroke="#7d8db0" stroke-width="2"/><circle cx="112" cy="45" r="3" fill="#e7ecf7"/><circle cx="166" cy="45" r="3" fill="#e7ecf7"/><line x1="112" y1="45" x2="160" y2="28" stroke="#e7ecf7" stroke-width="3"/><path d="M166 45 L235 45" fill="none" stroke="#7d8db0" stroke-width="2"/><g stroke="#e7ecf7" stroke-width="2" fill="none"><circle cx="252" cy="45" r="17"/><line x1="240" y1="33" x2="264" y2="57"/><line x1="264" y1="33" x2="240" y2="57"/></g><path d="M269 45 L290 45 L290 140" fill="none" stroke="#7d8db0" stroke-width="2"/><path d="M30 111 L30 140 L290 140" fill="none" stroke="#7d8db0" stroke-width="2"/><text x="139" y="18" text-anchor="middle" font-size="10" fill="#8fa0c2">interruptor</text><text x="252" y="80" text-anchor="middle" font-size="10" fill="#8fa0c2">lâmpada</text></svg>';
+IMG.fusivelFase='<svg viewBox="0 0 320 170"><circle cx="30" cy="90" r="16" fill="none" stroke="#e7ecf7" stroke-width="2"/><text x="30" y="96" text-anchor="middle" font-size="14" fill="#f7c948">~</text><path d="M30 74 L30 40 L95 40" fill="none" stroke="#7d8db0" stroke-width="2"/><rect x="95" y="30" width="60" height="20" rx="6" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="95" y1="40" x2="155" y2="40" stroke="#e7ecf7" stroke-width="2"/><line x1="155" y1="40" x2="215" y2="40" stroke="#7d8db0" stroke-width="2"/><rect x="215" y="22" width="70" height="36" rx="6" fill="none" stroke="#e7ecf7" stroke-width="2"/><text x="250" y="45" text-anchor="middle" font-size="11" fill="#8fa0c2">carga</text><path d="M285 40 L295 40 L295 140 L30 140 L30 106" fill="none" stroke="#7d8db0" stroke-width="2"/><text x="125" y="80" text-anchor="middle" font-size="10" fill="#8fa0c2">fusível</text></svg>';
+IMG.disjuntor='<svg viewBox="0 0 320 110"><line x1="30" y1="55" x2="120" y2="55" stroke="#7d8db0" stroke-width="2"/><rect x="120" y="35" width="80" height="40" rx="6" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="200" y1="55" x2="290" y2="55" stroke="#7d8db0" stroke-width="2"/><text x="160" y="98" text-anchor="middle" font-size="10" fill="#8fa0c2">disjuntor</text></svg>';
+IMG.trafo='<svg viewBox="0 0 320 190"><line x1="150" y1="40" x2="150" y2="150" stroke="#8fa0c2" stroke-width="2"/><line x1="162" y1="40" x2="162" y2="150" stroke="#8fa0c2" stroke-width="2"/><path d="M150 45 q-16 8 0 16 q-16 8 0 16 q-16 8 0 16 q-16 8 0 16" fill="none" stroke="#e7ecf7" stroke-width="2"/><path d="M162 45 q16 8 0 16 q16 8 0 16 q16 8 0 16 q16 8 0 16" fill="none" stroke="#e7ecf7" stroke-width="2"/><g stroke="#7d8db0" stroke-width="2" fill="none"><path d="M150 45 L150 30 L50 30"/><path d="M150 109 L150 160 L50 160"/><path d="M162 45 L162 30 L270 30"/><path d="M162 109 L162 160 L270 160"/><line x1="162" y1="77" x2="222" y2="77"/></g><circle cx="50" cy="30" r="3" fill="#e7ecf7"/><circle cx="50" cy="160" r="3" fill="#e7ecf7"/><circle cx="270" cy="30" r="3" fill="#e7ecf7"/><circle cx="270" cy="160" r="3" fill="#e7ecf7"/><circle cx="222" cy="77" r="3" fill="#e7ecf7"/><text x="60" y="20" font-size="10" fill="#8fa0c2">primário</text><text x="238" y="20" font-size="10" fill="#8fa0c2">secundário</text><text x="276" y="34" font-size="10" fill="#f7c948">12 V</text><text x="276" y="164" font-size="10" fill="#f7c948">12 V</text><text x="228" y="72" font-size="10" fill="#38bdf8">centro</text></svg>';
+IMG.aterramento='<svg viewBox="0 0 300 175"><rect x="90" y="25" width="120" height="70" rx="8" fill="none" stroke="#e7ecf7" stroke-width="2"/><text x="150" y="65" text-anchor="middle" font-size="11" fill="#8fa0c2">equipamento</text><line x1="150" y1="95" x2="150" y2="128" stroke="#7d8db0" stroke-width="2"/><g stroke="#7d8db0" stroke-width="3"><line x1="128" y1="128" x2="172" y2="128"/><line x1="136" y1="138" x2="164" y2="138"/><line x1="144" y1="148" x2="156" y2="148"/></g><text x="170" y="115" font-size="10" fill="#8fa0c2">PE</text></svg>';
+IMG.diodo='<svg viewBox="0 0 320 110"><line x1="40" y1="55" x2="130" y2="55" stroke="#7d8db0" stroke-width="2"/><polygon points="130,35 130,75 170,55" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="170" y1="35" x2="170" y2="75" stroke="#e7ecf7" stroke-width="3"/><line x1="170" y1="55" x2="260" y2="55" stroke="#7d8db0" stroke-width="2"/></svg>';
+IMG.led='<svg viewBox="0 0 320 120"><line x1="40" y1="65" x2="130" y2="65" stroke="#7d8db0" stroke-width="2"/><polygon points="130,45 130,85 170,65" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="170" y1="45" x2="170" y2="85" stroke="#e7ecf7" stroke-width="3"/><line x1="170" y1="65" x2="260" y2="65" stroke="#7d8db0" stroke-width="2"/><line x1="180" y1="40" x2="196" y2="24" stroke="#f7c948" stroke-width="2"/><polygon points="196,24 188,26 194,32" fill="#f7c948"/><line x1="200" y1="50" x2="216" y2="34" stroke="#f7c948" stroke-width="2"/><polygon points="216,34 208,36 214,42" fill="#f7c948"/></svg>';
+IMG.capacitor='<svg viewBox="0 0 320 110"><line x1="40" y1="55" x2="140" y2="55" stroke="#7d8db0" stroke-width="2"/><line x1="140" y1="25" x2="140" y2="85" stroke="#e7ecf7" stroke-width="3"/><line x1="160" y1="25" x2="160" y2="85" stroke="#e7ecf7" stroke-width="3"/><line x1="160" y1="55" x2="260" y2="55" stroke="#7d8db0" stroke-width="2"/></svg>';
+IMG.alicate='<svg viewBox="0 0 320 120"><line x1="20" y1="70" x2="300" y2="70" stroke="#7d8db0" stroke-width="3"/><path d="M120 70 a40 40 0 0 1 80 0" fill="none" stroke="#f59e0b" stroke-width="4"/><path d="M120 70 a40 40 0 0 0 80 0" fill="none" stroke="#f59e0b" stroke-width="4" stroke-dasharray="6 4"/><rect x="140" y="12" width="40" height="22" rx="4" fill="#101832" stroke="#e7ecf7" stroke-width="2"/></svg>';
+IMG.ohm2='<svg viewBox="0 0 320 120"><rect x="40" y="45" width="240" height="26" rx="13" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="40" y1="92" x2="280" y2="92" stroke="#f7c948" stroke-width="2"/><polygon points="280,87 292,92 280,97" fill="#f7c948"/><text x="160" y="110" text-anchor="middle" font-size="11" fill="#f7c948">L</text><line x1="300" y1="45" x2="300" y2="71" stroke="#38bdf8" stroke-width="2"/><text x="306" y="62" font-size="11" fill="#38bdf8">A</text></svg>';
+IMG.potencia='<svg viewBox="0 0 320 110"><line x1="40" y1="55" x2="110" y2="55" stroke="#7d8db0" stroke-width="2"/><rect x="110" y="35" width="100" height="40" rx="6" fill="none" stroke="#e7ecf7" stroke-width="2"/><text x="160" y="60" text-anchor="middle" font-size="14" fill="#f7c948">P</text><line x1="210" y1="55" x2="280" y2="55" stroke="#7d8db0" stroke-width="2"/></svg>';
+IMG.lampada='<svg viewBox="0 0 320 120"><circle cx="160" cy="55" r="30" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="139" y1="34" x2="181" y2="76" stroke="#e7ecf7" stroke-width="2"/><line x1="181" y1="34" x2="139" y2="76" stroke="#e7ecf7" stroke-width="2"/><line x1="40" y1="55" x2="130" y2="55" stroke="#7d8db0" stroke-width="2"/><line x1="190" y1="55" x2="280" y2="55" stroke="#7d8db0" stroke-width="2"/></svg>';
+IMG.bussola='<svg viewBox="0 0 320 120"><line x1="20" y1="35" x2="300" y2="35" stroke="#7d8db0" stroke-width="3"/><circle cx="160" cy="75" r="26" fill="none" stroke="#e7ecf7" stroke-width="2"/><line x1="160" y1="75" x2="160" y2="55" stroke="#ef4444" stroke-width="3"/></svg>';
+IMG.tomada='<svg viewBox="0 0 320 120"><circle cx="160" cy="55" r="34" fill="none" stroke="#e7ecf7" stroke-width="2"/><circle cx="148" cy="47" r="4" fill="#e7ecf7"/><circle cx="172" cy="47" r="4" fill="#e7ecf7"/><line x1="160" y1="65" x2="160" y2="77" stroke="#8fa0c2" stroke-width="3"/></svg>';
+IMG.caneta='<svg viewBox="0 0 320 110"><line x1="20" y1="80" x2="300" y2="80" stroke="#7d8db0" stroke-width="3"/><rect x="140" y="25" width="95" height="18" rx="9" fill="none" stroke="#f59e0b" stroke-width="2"/><circle cx="226" cy="34" r="5" fill="#ef4444"/><path d="M185 43 L185 70" stroke="#8fa0c2" stroke-width="2" stroke-dasharray="4 3"/></svg>';
+IMG.no='<svg viewBox="0 0 320 120"><circle cx="160" cy="60" r="6" fill="#f7c948"/><line x1="160" y1="60" x2="60" y2="60" stroke="#7d8db0" stroke-width="2"/><line x1="160" y1="60" x2="260" y2="60" stroke="#7d8db0" stroke-width="2"/><line x1="160" y1="60" x2="160" y2="15" stroke="#7d8db0" stroke-width="2"/><line x1="160" y1="60" x2="110" y2="105" stroke="#7d8db0" stroke-width="2"/></svg>';
+
+/* ==================== BANCO FÁCIL (73) ==================== */
+var BANCO_FACIL=[
+ {p:"O que a Eletrostática estuda?",a:["As cargas elétricas em movimento","As cargas elétricas em repouso","Apenas os ímãs e o magnetismo","O calor nos condutores"],c:1,e:"A Eletrostática é a parte da física que estuda as cargas elétricas em repouso.",r:"AP ELETRICIDADE.pdf — pág. 6",img:IMG.atomo},
+ {p:"Qual é a unidade de medida da carga elétrica?",a:["Volt","Coulomb","Ampère","Ohm"],c:1,e:"A unidade da carga elétrica é o coulomb (C).",r:"AP ELETRICIDADE.pdf — pág. 6",img:IMG.atomo},
+ {p:"Qual partícula do átomo possui carga elétrica negativa?",a:["Próton","Nêutron","Elétron","Íon"],c:2,e:"Os elétrons têm carga negativa e ficam na eletrosfera.",r:"AP ELETRICIDADE.pdf — pág. 6",img:IMG.atomo},
+ {p:"Os prótons estão localizados no núcleo do átomo e possuem carga elétrica...",a:["Negativa","Positiva","Neutra","Variável"],c:1,e:"Os prótons localizam-se no núcleo e possuem carga elétrica positiva.",r:"AP ELETRICIDADE.pdf — pág. 6",img:IMG.atomo},
+ {p:"Um átomo é considerado eletricamente neutro quando...",a:["Não possui nêutrons","Possui o mesmo número de prótons e elétrons","Possui mais elétrons que prótons","Possui apenas nêutrons"],c:1,e:"Com o mesmo número de prótons (+) e elétrons (−), a carga total é zero.",r:"AP ELETRICIDADE.pdf — pág. 6",img:IMG.atomo},
+ {p:"Quando um átomo ganha ou perde elétrons, ele passa a ser chamado de...",a:["Íon","Isótopo","Molécula","Condutor"],c:0,e:"O átomo eletrizado (positivo ou negativo) é chamado de íon.",r:"AP ELETRICIDADE.pdf — pág. 7",img:IMG.atomo},
+ {p:"Duas cargas elétricas de MESMO sinal, quando aproximadas...",a:["Se atraem","Se repelem","Se anulam","Não interagem"],c:1,e:"Cargas de sinais iguais se repelem; de sinais diferentes se atraem.",r:"AP ELETRICIDADE.pdf — pág. 8",img:IMG.esferas},
+ {p:"Quais são os três processos de eletrização?",a:["Atrito, contato e indução","Aquecimento, resfriamento e atrito","Fusão, vaporização e condensação","Contato, magnetização e corte"],c:0,e:"Os processos de eletrização são: por atrito, por contato e por indução.",r:"AP ELETRICIDADE.pdf — pág. 7",img:IMG.atrito},
+ {p:"Ao esfregar vidro em lã, o vidro fica positivo porque...",a:["Ganha prótons","Perde elétrons para a lã","Ganha nêutrons","Perde prótons"],c:1,e:"No atrito vidro-lã, o vidro perde elétrons para a lã e fica com carga positiva.",r:"AP ELETRICIDADE.pdf — pág. 7",img:IMG.atrito},
+ {p:"O que é tensão elétrica?",a:["A quantidade de elétrons em um corpo","A diferença de potencial elétrico entre dois pontos","A velocidade dos elétrons","A força de um ímã"],c:1,e:"Tensão (ddp) é a diferença de potencial elétrico entre dois pontos — a força que movimenta os elétrons.",r:"AP ELETRICIDADE.pdf — pág. 10",img:IMG.bateria},
+ {p:"Qual é a unidade de medida da tensão elétrica?",a:["Ampère","Ohm","Watt","Volt"],c:3,e:"A unidade da tensão é o volt (V), em homenagem ao físico italiano Alessandro Volta (1745-1827).",r:"Apostila.pdf — pág. 5",img:IMG.bateria},
+ {p:"A tensão contínua (DC) é aquela que...",a:["Muda de sentido com o tempo","Não muda de valor nem de sentido, e possui polaridade definida","Só existe nas tomadas","Tem frequência de 60 Hz"],c:1,e:"A tensão contínua tem polaridade definida, sentido único e frequência igual a 0 Hz.",r:"AP ELETRICIDADE.pdf — pág. 10",img:IMG.ondaDC},
+ {p:"A tensão alternada (AC) se caracteriza por...",a:["Ter polaridade fixa","Não ter polaridade definida, mudando o sentido do fluxo de elétrons com o tempo","Ser obtida apenas em pilhas","Nunca mudar de valor"],c:1,e:"Na AC, o sentido do fluxo de elétrons muda a cada semiciclo da tensão.",r:"AP ELETRICIDADE.pdf — pág. 10",img:IMG.onda},
+ {p:"Qual é a frequência da rede elétrica no Brasil?",a:["50 Hz","60 Hz","110 Hz","220 Hz"],c:1,e:"No Brasil, a frequência da rede elétrica é de 60 Hertz (60 ciclos por segundo).",r:"AP ELETRICIDADE.pdf — pág. 12",img:IMG.onda},
+ {p:"O que é corrente elétrica?",a:["O acúmulo de cargas estáticas","O fluxo ordenado de cargas elétricas","A oposição à passagem de elétrons","A quantidade de calor em um fio"],c:1,e:"Corrente elétrica é o fluxo ordenado de cargas em um circuito com diferença de potencial.",r:"AP ELETRICIDADE.pdf — pág. 18",img:IMG.circuitoSimples},
+ {p:"Qual é a unidade de medida da corrente elétrica?",a:["Volt","Ohm","Ampère","Coulomb"],c:2,e:"A unidade da corrente elétrica é o ampère (A).",r:"AP ELETRICIDADE.pdf — pág. 18",img:IMG.circuitoSimples},
+ {p:"No sentido REAL, os elétrons se deslocam...",a:["Do polo positivo para o negativo","Do polo negativo para o positivo","Nos dois sentidos ao mesmo tempo","Apenas em corrente alternada"],c:1,e:"No sentido real, o fluxo de elétrons vai do polo negativo para o positivo.",r:"AP ELETRICIDADE.pdf — pág. 18",img:IMG.circuitoSimples},
+ {p:"No sentido CONVENCIONAL, a corrente circula...",a:["Do polo positivo para o negativo","Do polo negativo para o positivo","Apenas em isolantes","Contra a tensão"],c:0,e:"No sentido convencional, o fluxo vai do polo positivo para o negativo.",r:"AP ELETRICIDADE.pdf — pág. 18",img:IMG.circuitoSimples},
+ {p:"Para haver corrente elétrica, o circuito deve estar...",a:["Aberto","Fechado, com diferença de potencial","Aterrado apenas","Sem resistência"],c:1,e:"Um circuito fechado permite que a corrente flua do ponto de maior para o de menor energia.",r:"AP ELETRICIDADE.pdf — pág. 18-19",img:IMG.circuitoSimples},
+ {p:"Qual é a unidade de medida da resistência elétrica?",a:["Volt","Watt","Ohm","Ampère"],c:2,e:"A unidade é o ohm, representado pela letra grega ômega (Ω).",r:"AP ELETRICIDADE.pdf — pág. 17",img:IMG.resistor},
+ {p:"A função do resistor em um circuito fechado é...",a:["Aumentar a tensão da bateria","Se opor à passagem da corrente, provocando queda de tensão","Armazenar corrente","Eliminar o calor"],c:1,e:"O resistor se opõe à passagem da corrente e provoca queda de tensão para a carga.",r:"AP ELETRICIDADE.pdf — pág. 17",img:IMG.resistor},
+ {p:"Ao trabalhar em circuito fechado, o resistor transforma energia elétrica em...",a:["Energia luminosa","Energia térmica (calor)","Energia magnética apenas","Energia cinética"],c:1,e:"O resistor transforma energia elétrica em térmica — efeito Joule.",r:"AP ELETRICIDADE.pdf — pág. 17",img:IMG.resistor},
+ {p:"Qual é a unidade de medida mais utilizada da potência elétrica?",a:["Ohm","Watt","Volt","Ampère"],c:1,e:"A potência elétrica é medida em watts (W).",r:"AP ELETRICIDADE.pdf — pág. 18",img:IMG.potencia},
+ {p:"As pilhas comuns são fontes de tensão contínua geralmente de...",a:["1,5 V","12 V","127 V","220 V"],c:0,e:"As pilhas geralmente são de 1,5 V (ou 1,25 V), obtidas por processo químico.",r:"AP ELETRICIDADE.pdf — pág. 13",img:IMG.bateria},
+ {p:"Por convenção, os polos da bateria são representados pelas cores...",a:["Vermelho (+) e preto (−)","Azul e verde","Amarelo e branco","Preto (+) e vermelho (−)"],c:0,e:"A parte positiva é representada por vermelho e a negativa por preto.",r:"AP ELETRICIDADE.pdf — pág. 13",img:IMG.bateria},
+ {p:"A função principal de uma fonte de alimentação DC é...",a:["Receber tensão alternada e transformá-la em tensão contínua","Aumentar a duração das pilhas","Medir tensão","Armazenar energia por longos períodos"],c:0,e:"A fonte recebe tensão AC e converte em DC para alimentar os circuitos.",r:"AP ELETRICIDADE.pdf — pág. 15",img:IMG.fonte},
+ {p:"O diodo retificador conduz corrente elétrica...",a:["Nos dois sentidos","Apenas em corrente alternada","Em um único sentido","Nunca"],c:2,e:"O diodo retificador é um semicondutor que conduz em um único sentido.",r:"AP ELETRICIDADE.pdf — pág. 19",img:IMG.diodo},
+ {p:"Os terminais do diodo são chamados...",a:["Polo positivo e polo negativo","Ânodo e cátodo","Base e coletor","Entrada e saída"],c:1,e:"O terminal positivo é o ânodo (A) e o negativo é o cátodo (K).",r:"AP ELETRICIDADE.pdf — pág. 19",img:IMG.diodo},
+ {p:"O que é um LED?",a:["Um diodo retificador comum","Um diodo emissor de luz","Um tipo de capacitor","Um tipo de fusível"],c:1,e:"O LED é um diodo semicondutor emissor de luz, de luz monocromática.",r:"AP ELETRICIDADE.pdf — pág. 19",img:IMG.led},
+ {p:"A função principal do capacitor é...",a:["Retificar tensão","Armazenar energia elétrica por um determinado período","Medir corrente","Proteger contra curto"],c:1,e:"O capacitor armazena energia elétrica por um determinado tempo.",r:"AP ELETRICIDADE.pdf — pág. 34",img:IMG.capacitor},
+ {p:"A unidade de medida da capacitância é o...",a:["Ohm","Farad","Volt","Henry"],c:1,e:"A unidade é o farad (F), com submúltiplos: microfarad, nanofarad e picofarad.",r:"AP ELETRICIDADE.pdf — pág. 34",img:IMG.capacitor},
+ {p:"A função do fusível é...",a:["Aumentar a tensão","Proteger o circuito contra excesso de corrente, abrindo-o","Medir corrente","Armazenar energia"],c:1,e:"O fusível queima (abre o circuito) em excesso de corrente, carga ou potência.",r:"AP ELETRICIDADE.pdf — pág. 32",img:IMG.fusivelFase},
+ {p:"Pela norma técnica, o fio NEUTRO deve ser da cor...",a:["Vermelha","Verde","Azul","Amarela"],c:2,e:"O fio neutro deve ser sempre azul.",r:"AP ELETRICIDADE.pdf — pág. 65",img:IMG.interruptor},
+ {p:"O condutor de proteção (terra) deve ser da cor...",a:["Azul","Preto","Branco","Verde ou verde com amarelo"],c:3,e:"O fio terra (PE) é verde ou verde com amarelo.",r:"AP ELETRICIDADE.pdf — pág. 65",img:IMG.aterramento},
+ {p:"O multímetro examina em essência...",a:["Apenas temperatura","Tensão, corrente e resistência elétrica","Apenas potência","Luz e som"],c:1,e:"O multímetro possui voltímetro, amperímetro e ohmímetro internos.",r:"AP ELETRICIDADE.pdf — pág. 22",img:IMG.multimetro},
+ {p:"Qual partícula do átomo NÃO possui carga elétrica e fica no núcleo?",a:["Próton","Elétron","Nêutron","Íon"],c:2,e:"O nêutron não possui carga elétrica e localiza-se no núcleo, junto com os prótons.",r:"AP ELETRICIDADE.pdf — pág. 6",img:IMG.atomo},
+ {p:"Os elétrons ficam em qual região do átomo?",a:["No núcleo","Na eletrosfera, região ao redor do núcleo","Dentro dos prótons","No centro do átomo"],c:1,e:"Os elétrons ficam na eletrosfera, a região ao redor do núcleo atômico.",r:"AP ELETRICIDADE.pdf — pág. 6",img:IMG.atomo},
+ {p:"Um átomo com 2 prótons e 2 elétrons recebe mais 1 elétron. Ele ficará...",a:["Positivo","Neutro","Negativo","Sem carga"],c:2,e:"Com 3 elétrons (−) e 2 prótons (+), a carga total fica negativa: vira um íon negativo.",r:"AP ELETRICIDADE.pdf — pág. 7",img:IMG.atomo},
+ {p:"Na eletrização por indução, a primeira etapa é...",a:["Aproximar um corpo eletrizado de um corpo neutro, causando a separação de cargas","Aquecer o corpo","Ligar o corpo diretamente na tomada","Esfregar dois corpos"],c:0,e:"Na indução: primeiro aproxima-se o corpo eletrizado (separando cargas), depois liga-se à terra e por fim desconecta-se.",r:"AP ELETRICIDADE.pdf — pág. 8",img:IMG.inducao},
+ {p:"O aterramento (PE) de um equipamento elétrico é um exemplo de eletrização...",a:["Por atrito","Por contato com a terra","Por indução com aquecimento","Por magnetização"],c:1,e:"O aterramento é uma eletrização por contato com a terra: as cargas negativas sobem pelo fio e neutralizam o corpo.",r:"AP ELETRICIDADE.pdf — pág. 8",img:IMG.aterramento},
+ {p:"Um aterramento bem feito protege contra danos da energia estática quais componentes?",a:["Lâmpadas incandescentes","Transistores, circuitos integrados, chipset, memórias e processadores","Fios de cobre","Tomadas"],c:1,e:"A energia estática pode danificar parcialmente ou totalmente esses componentes eletrônicos.",r:"AP ELETRICIDADE.pdf — pág. 9",img:IMG.aterramento},
+ {p:"Aproximando um canudo eletrizado de um filete de água, a água...",a:["É repelida","Não sofre efeito","É desviada, atraída pelo canudo","Evapora"],c:2,e:"Devido à atração elétrica, ocorre um desvio visível na trajetória do filete de água.",r:"AP ELETRICIDADE.pdf — pág. 9",img:IMG.agua},
+ {p:"Um material é dito CONDUTOR de energia elétrica quando...",a:["É difícil gerar fluxo de elétrons","Facilmente é possível gerar um fluxo de elétrons em um único sentido","Não possui elétrons","Só conduz calor"],c:1,e:"Condutores permitem gerar facilmente um fluxo de elétrons em um único sentido.",r:"AP ELETRICIDADE.pdf — pág. 9",img:IMG.circuitoSimples},
+ {p:"Um material é dito ISOLANTE elétrico quando...",a:["É difícil gerar fluxo de elétrons nesse material","Conduz facilmente a corrente","É sempre metálico","Possui muitos elétrons livres"],c:0,e:"No isolante é difícil gerar fluxo de elétrons quando aplicamos uma ddp.",r:"AP ELETRICIDADE.pdf — pág. 9",img:IMG.resistor},
+ {p:"São exemplos de materiais ISOLANTES elétricos...",a:["Cobre, prata e ouro","Silício e germânio","Borracha, vidro, mica e porcelana","Alumínio e níquel"],c:2,e:"A borracha tem resistividade elevada; vidro, mica e porcelana isolam sistemas de alta tensão.",r:"AP ELETRICIDADE.pdf — pág. 40",img:IMG.resistor},
+ {p:"O osciloscópio é um instrumento que...",a:["Mede apenas resistência","Possui tela onde se visualizam formas de onda de tensão, corrente, frequência e período","Serve só para medir potência","Substitui o fusível"],c:1,e:"O osciloscópio exibe em sua tela as formas de onda dos sinais elétricos.",r:"AP ELETRICIDADE.pdf — pág. 11",img:IMG.onda},
+ {p:"Na tela do osciloscópio, uma tensão CONTÍNUA não variável aparece como...",a:["Uma onda senoidal","Uma linha reta","Uma onda quadrada","Nada aparece"],c:1,e:"A linha reta representa a tensão contínua, que não varia com o tempo (frequência 0 Hz).",r:"AP ELETRICIDADE.pdf — pág. 11",img:IMG.bateria},
+ {p:"Um ciclo completo de uma tensão alternada é formado por...",a:["Apenas o semiciclo positivo","Dois semiciclos positivos","Um semiciclo positivo e um negativo","Quatro semiciclos"],c:2,e:"Um ciclo compreende um semiciclo negativo mais um semiciclo positivo.",r:"AP ELETRICIDADE.pdf — pág. 12",img:IMG.onda},
+ {p:"A tensão pico a pico (Vpp) de uma onda senoidal é igual a...",a:["2 × Vp","Vp / 2","Vef × √2","Vp × √2"],c:0,e:"Vpp = 2 × Vp: é a distância do pico positivo ao pico negativo.",r:"AP ELETRICIDADE.pdf — pág. 13",img:IMG.onda},
+ {p:"As duas redes elétricas mais comuns no Brasil são...",a:["110 V e 380 V","127 V e 220 V","12 V e 24 V","5 V e 9 V"],c:1,e:"As redes mais comuns no Brasil são as de 127 V e 220 V.",r:"AP ELETRICIDADE.pdf — pág. 12",img:IMG.tomada},
+ {p:"Uma bateria é composta por...",a:["Diversas células de pilhas internas","Um único elétron livre","Somente fios de cobre","Um capacitor grande"],c:0,e:"Uma bateria é composta por diversas células de pilhas internas.",r:"AP ELETRICIDADE.pdf — pág. 13",img:IMG.bateria},
+ {p:"As placas fotovoltaicas recebem energia solar e a transformam em...",a:["Tensão alternada (AC)","Tensão contínua (DC)","Energia mecânica","Campo magnético apenas"],c:1,e:"As placas fotovoltaicas transformam a energia solar em tensão DC.",r:"AP ELETRICIDADE.pdf — pág. 15",img:IMG.fonte},
+ {p:"O dínamo gera tensão contínua (DC) através do processo de...",a:["Reação química","Atrito","Eletromagnetismo","Efeito Joule"],c:2,e:"Os dínamos geram tensão DC pelo processo de eletromagnetismo.",r:"AP ELETRICIDADE.pdf — pág. 15",img:IMG.fonte},
+ {p:"Qual é a vantagem das pilhas e baterias em relação às fontes de alimentação?",a:["Nunca descarregam","Geram tensão contínua 100% pura, sem interferências","São sempre mais baratas","Geram tensão alternada"],c:1,e:"Baterias geram DC pura, sem picos ou variação ondulatória; fontes geram DC com pequeno nível de interferência.",r:"AP ELETRICIDADE.pdf — pág. 15",img:IMG.bateria},
+ {p:"Qual é a desvantagem das pilhas e baterias?",a:["Com o passar do tempo vão descarregando","Não possuem polaridade","Geram tensão alternada","Precisam da rede elétrica"],c:0,e:"Pilhas e baterias descarregam com o tempo; a fonte, ligada à rede, não tem esse problema.",r:"AP ELETRICIDADE.pdf — pág. 15",img:IMG.bateria},
+ {p:"Em uma lâmpada incandescente, do total de energia emitida, aproximadamente...",a:["95% é calor e 5% é luminosidade","95% é luz e 5% é calor","50% é calor","100% é luz"],c:0,e:"Segundo o Instituto de Eletrotécnica e Energia de SP, cerca de 95% vira calor e 5% luz.",r:"AP ELETRICIDADE.pdf — pág. 16",img:IMG.lampada},
+ {p:"A corrente elétrica ao passar por um fio condutor gera...",a:["Apenas luz","Calor e campo magnético","Frio","Apenas som"],c:1,e:"A corrente gera calor (efeito Joule) e campo magnético (experiência de Oersted, 1820).",r:"AP ELETRICIDADE.pdf — pág. 16",img:IMG.bussola},
+ {p:"O ferro de solda é um circuito resistivo que transforma...",a:["Toda a energia elétrica em energia térmica (calor)","Toda a energia em luz","Energia térmica em elétrica","Energia em movimento"],c:0,e:"Ao ser aplicada a ddp no seu resistor interno, ele aquece: toda a energia vira calor.",r:"AP ELETRICIDADE.pdf — pág. 18",img:IMG.potencia},
+ {p:"O tamanho físico de um resistor indica...",a:["Seu valor em ohms","Sua potência de dissipação de calor","Sua tensão máxima apenas","Sua capacitância"],c:1,e:"Um resistor de maior tamanho físico poderá dissipar maior potência elétrica.",r:"AP ELETRICIDADE.pdf — pág. 17",img:IMG.resistor},
+ {p:"Dependendo do valor da capacitância, o capacitor pode trabalhar como...",a:["Filtro de altas ou baixas frequências","Gerador de tensão","Transformador","Interruptor"],c:0,e:"O capacitor também funciona como filtro de altas ou baixas frequências.",r:"AP ELETRICIDADE.pdf — pág. 34",img:IMG.capacitor},
+ {p:"Um capacitor eletrolítico com polaridade definida possui...",a:["Polo positivo e polo negativo que devem ser respeitados","Terminais sem polaridade","Três terminais","Funcionamento apenas em AC"],c:0,e:"Como o C1 do exemplo (1000 µF/35 V): um terminal é o polo positivo e o outro o negativo.",r:"AP ELETRICIDADE.pdf — pág. 35",img:IMG.capacitor},
+ {p:"Além de proteger o circuito, o disjuntor também pode...",a:["Ligar e desligar o circuito manualmente","Aumentar a tensão","Retificar tensão","Medir corrente"],c:0,e:"O disjuntor poderá ligar e desligar o circuito manualmente.",r:"AP ELETRICIDADE.pdf — pág. 33",img:IMG.disjuntor},
+ {p:"O transformador é um dispositivo utilizado para...",a:["Abaixar, aumentar ou manter o nível da tensão elétrica AC","Armazenar corrente","Retificar tensão para DC","Medir potência"],c:0,e:"O transformador modifica os níveis de tensão e corrente AC por indução eletromagnética.",r:"AP ELETRICIDADE.pdf — pág. 29 e 35",img:IMG.trafo},
+ {p:"Os LEDs de alta luminosidade trabalham com ddp e corrente de até aproximadamente...",a:["3,3 V e 30 mA","12 V e 1 A","1,6 V e 5 mA","220 V e 20 mA"],c:0,e:"LEDs de alta luminosidade: ddp até 3,3 V DC e corrente até 30 mA.",r:"AP ELETRICIDADE.pdf — pág. 19",img:IMG.led},
+ {p:"A eletrização de um corpo é...",a:["Uma maneira de deixar o corpo com carga elétrica positiva ou negativa","O aquecimento do corpo","A queima do corpo","O resfriamento do corpo"],c:0,e:"Eletrizar é deixar um corpo, inicialmente neutro, eletricamente carregado.",r:"AP ELETRICIDADE.pdf — pág. 7",img:IMG.atrito},
+ {p:"No atrito entre vidro e lã, a lã...",a:["Perde elétrons e fica positiva","Recebe elétrons e fica negativa","Fica neutra","Perde prótons"],c:1,e:"O vidro perde elétrons para a lã; a lã, por receber elétrons, fica negativa.",r:"AP ELETRICIDADE.pdf — pág. 7",img:IMG.atrito},
+ {p:"Após o atrito, os dois corpos ficam com cargas...",a:["De módulo igual e sinais opostos","De mesmo sinal e mesmo valor","Sempre nulas","Apenas positivas"],c:0,e:"Exemplo da apostila: +2C e −2C — módulo igual, sinais opostos.",r:"AP ELETRICIDADE.pdf — pág. 7",img:IMG.esferas},
+ {p:"Um circuito fechado é aquele em que...",a:["Há possibilidade da corrente fluir de um ponto de maior energia para menor energia","Não existe corrente","A resistência é zero","A resistência é infinita"],c:0,e:"Você sabia: circuito fechado é quando a corrente pode fluir do ponto de maior para o de menor energia.",r:"AP ELETRICIDADE.pdf — pág. 19",img:IMG.circuitoSimples},
+ {p:"O efeito Joule é...",a:["O aquecimento do condutor ou resistor pela passagem da corrente elétrica","O resfriamento do fio","A geração de luz fria","O campo elétrico do ímã"],c:0,e:"Quando um condutor ou resistência aquece pela passagem de corrente, chamamos de efeito Joule.",r:"AP ELETRICIDADE.pdf — pág. 22",img:IMG.resistor},
+ {p:"O componente que transforma a tensão AC em DC nas fontes de alimentação é...",a:["O capacitor","O diodo retificador","O resistor","O transformador"],c:1,e:"O diodo retificador retifica a tensão AC em DC nas fontes (retificação).",r:"AP ELETRICIDADE.pdf — pág. 19",img:IMG.diodo},
+ {p:"Os diodos LED acendem quando polarizados diretamente com tensão do tipo...",a:["Alternada (AC)","Contínua (DC)","Qualquer uma","Pulsante apenas"],c:1,e:"O LED funciona aceso com ddp DC entre 1,6 V e 2 V (baixa/média luminosidade).",r:"AP ELETRICIDADE.pdf — pág. 19",img:IMG.led},
+ {p:"A frequência de um sinal elétrico é...",a:["A quantidade de vezes que o sinal se repete por segundo","A amplitude da onda","O calor do sinal","A velocidade da luz"],c:0,e:"Frequência é a quantidade de repetições do sinal por segundo (Hz).",r:"AP ELETRICIDADE.pdf — pág. 12",img:IMG.onda},
+ {p:"Em um circuito ABERTO, aplicando 12 V em um terminal do resistor, no outro terminal e a ddp no resistor teremos...",a:["12 V e ddp = 0 V","0 V e ddp = 12 V","12 V e ddp = 12 V","0 V e ddp = 0 V"],c:0,e:"Sem corrente, qualquer tensão aplicada em um terminal aparece no outro: a ddp no resistor é 0 V.",r:"AP ELETRICIDADE.pdf — pág. 17",img:IMG.resistor},
+ {p:"Em um circuito fechado funcionando normalmente, a resistência elétrica é...",a:["Diferente de zero e diferente de infinito","Igual a zero","Infinita","Negativa"],c:0,e:"Obs. da apostila: em um circuito fechado, a resistência elétrica é diferente de zero e de infinito.",r:"AP ELETRICIDADE.pdf — pág. 15",img:IMG.circuitoSimples}
+];
+
+/* ==================== BANCO MÉDIO (81) ==================== */
+var BANCO_MEDIO=[
+ {p:"Duas esferas condutoras idênticas, uma com +4C e outra neutra, são colocadas em contato. Após o contato, cada uma fica com...",a:["+4 C e 0 C","+2 C e +2 C","+1 C e +3 C","0 C e +4 C"],c:1,e:"No contato entre esferas idênticas, a carga total (+4C) se divide igualmente: +2C cada.",r:"AP ELETRICIDADE.pdf — pág. 7",img:IMG.esferas},
+ {p:"Uma bateria de 12 V totalmente carregada, medida com o multímetro sem carga, indicará...",a:["Exatamente 12,0 V","Um valor superior a 12 V (ex.: 12,7 V)","Um valor inferior a 10 V","Zero volt"],c:1,e:"Bateria carregada indica, sem carga, tensão cerca de 5% acima da nominal — 12,7 V no exemplo.",r:"AP ELETRICIDADE.pdf — pág. 14",img:IMG.bateria},
+ {p:"Ligando baterias iguais em PARALELO, obtemos...",a:["Maior tensão","A mesma tensão, com maior tempo de alimentação","Menor tensão","Maior tensão e maior corrente ao mesmo tempo"],c:1,e:"Em paralelo a tensão é a mesma; o objetivo é alimentar a carga por mais tempo.",r:"AP ELETRICIDADE.pdf — pág. 14",img:IMG.pilhaParalelo},
+ {p:"Ligando baterias em SÉRIE, a tensão total passa a ser...",a:["A soma das tensões individuais","A divisão das tensões pelo número de baterias","Igual à de uma única bateria","Sempre zero"],c:0,e:"Em série, liga-se o positivo de uma no negativo da outra e as tensões se somam.",r:"AP ELETRICIDADE.pdf — pág. 14",img:IMG.pilhaSerie},
+ {p:"Duas baterias de 9 V ligadas em série fornecem...",a:["9 V","4,5 V","18 V","27 V"],c:2,e:"Em série: 9 V + 9 V = 18 V.",r:"AP ELETRICIDADE.pdf — pág. 14",img:IMG.pilhaSerie},
+ {p:"O que acontece ao ligar em paralelo baterias com tensões diferentes?",a:["Nada, funciona normalmente","A de maior tensão tende a descarregar na de menor, aquecendo e danificando ambas","As tensões se somam","O sistema fica mais seguro"],c:1,e:"A apostila alerta: baterias em paralelo devem ter a mesma tensão, caso contrário ambas são danificadas.",r:"AP ELETRICIDADE.pdf — pág. 62",img:IMG.pilhaParalelo},
+ {p:"Em um circuito com bateria de 9 V e um LED, usa-se um resistor em série para...",a:["Aumentar o brilho do LED","Se opor à corrente e provocar queda de tensão, protegendo o LED","Armazenar energia","Retificar a tensão"],c:1,e:"O LED comum suporta até cerca de 2 V; ligado direto em 9 V queimaria. O resistor limita a corrente.",r:"AP ELETRICIDADE.pdf — pág. 19",img:IMG.ledResistor},
+ {p:"Os LEDs de baixa luminosidade, quando acesos, trabalham geralmente com tensão entre...",a:["1,6 V e 2 V","9 V e 12 V","110 V e 220 V","5 V e 8 V"],c:0,e:"LEDs de baixa/média luminosidade acendem com ddp entre 1,6 V e 2 V DC.",r:"AP ELETRICIDADE.pdf — pág. 19",img:IMG.led},
+ {p:"Para medir a tensão de uma bateria de 12 V com multímetro digital, devemos usar...",a:["Escala de 20 V DC, ponteira vermelha no positivo e preta no negativo","Escala de 200 V AC","Escala de continuidade","Escala de 10 A DC"],c:0,e:"Usa-se escala DC acima da tensão (20 V), respeitando a polaridade das ponteiras.",r:"AP ELETRICIDADE.pdf — pág. 13",img:IMG.multimetro},
+ {p:"Para medir TENSÃO elétrica, o multímetro deve ser ligado...",a:["Em série com a carga","Em paralelo com a carga, sem fechar o circuito","Em curto","Desligado do circuito"],c:1,e:"O voltímetro é sempre ligado em paralelo com o que se deseja medir.",r:"AP ELETRICIDADE.pdf — pág. 22",img:IMG.multimetro},
+ {p:"Para medir CORRENTE elétrica, o multímetro deve ser ligado...",a:["Em paralelo","Em série com a carga, fechando o circuito","Desligado","Entre duas fases quaisquer"],c:1,e:"O amperímetro trabalha em série com o circuito, e a corrente passa por ele.",r:"AP ELETRICIDADE.pdf — pág. 22",img:IMG.multimetro},
+ {p:"Para medir RESISTÊNCIA com o ohmímetro, o componente deve estar...",a:["Ligado e alimentado","Desligado do circuito, pelo menos um dos terminais","Em curto","Conectado à rede elétrica"],c:1,e:"A resistência deve ser medida com o componente desenergizado e fora do circuito.",r:"AP ELETRICIDADE.pdf — pág. 22",img:IMG.multimetro},
+ {p:"No teste de continuidade, o visor indicando 0 Ω significa...",a:["Circuito aberto","Continuidade: os pontos estão interligados","Fusível queimado","Resistência muito alta"],c:1,e:"Zero ohm indica que não há resistência entre as ponteiras: existe continuidade.",r:"AP ELETRICIDADE.pdf — pág. 26",img:IMG.continuidade},
+ {p:"Com as ponteiras separadas na escala de continuidade, o multímetro indica 'I' ou '1'. Isso significa...",a:["Resistência zero","Resistência acima da capacidade da escala: circuito aberto","Curto-circuito","Presença de corrente alternada"],c:1,e:"O símbolo indica circuito aberto — resistência acima do limite da escala.",r:"AP ELETRICIDADE.pdf — pág. 26",img:IMG.continuidade},
+ {p:"Retirando uma lâmpada de um circuito série, as demais...",a:["Continuam acesas","Apagam, pois o circuito fica aberto","Brilham mais forte","Mudam de cor"],c:1,e:"Sem o filamento da lâmpada retirada, o circuito abre e a corrente deixa de existir.",r:"AP ELETRICIDADE.pdf — pág. 44 e 46",img:IMG.serie3},
+ {p:"Em um circuito série, a corrente elétrica é...",a:["Diferente em cada componente","A mesma em todos os componentes","Sempre zero","Maior no primeiro componente"],c:1,e:"A corrente que circula em um circuito série é a mesma para todos os componentes.",r:"AP ELETRICIDADE.pdf — pág. 40",img:IMG.serie3},
+ {p:"Em um circuito série, a tensão total é...",a:["A soma das tensões individuais de cada componente","Igual à tensão do menor componente","Dividida igualmente, sempre","Sempre 220 V"],c:0,e:"V(total) = V1 + V2 + V3 + ... + Vn.",r:"AP ELETRICIDADE.pdf — pág. 40",img:IMG.serie3},
+ {p:"A resistência total de um circuito série é...",a:["A soma das resistências individuais","O produto das resistências","A menor das resistências","A média das resistências"],c:0,e:"R(total) = R1 + R2 + R3 + ... + Rn.",r:"AP ELETRICIDADE.pdf — pág. 40",img:IMG.serie3},
+ {p:"Em um circuito paralelo, a tensão nos componentes é...",a:["A mesma para todos os componentes","Dividida entre eles","Sempre diferente","Zero"],c:0,e:"No paralelo, todos os componentes recebem a mesma tensão.",r:"AP ELETRICIDADE.pdf — pág. 51",img:IMG.paralelo3},
+ {p:"Em um circuito paralelo, a corrente total é...",a:["A soma das correntes individuais de cada ramo","A mesma em todos os ramos","Menor que a corrente de qualquer ramo","Igual à tensão"],c:0,e:"I(total) = I1 + I2 + ... + In; cada ramo tem corrente independente.",r:"AP ELETRICIDADE.pdf — pág. 51",img:IMG.paralelo3},
+ {p:"Em um circuito paralelo, se uma lâmpada queimar, as demais...",a:["Apagam juntas","Continuam funcionando normalmente","Brilham mais fraco","Entram em curto"],c:1,e:"Se um componente deixar de funcionar no paralelo, os demais continuam funcionando.",r:"AP ELETRICIDADE.pdf — pág. 51 e 56",img:IMG.paralelo3},
+ {p:"As lâmpadas de uma residência são ligadas em...",a:["Série","Paralelo","Elas não são ligadas","Apenas circuito misto"],c:1,e:"Por isso, apagar ou retirar uma lâmpada não afeta as demais.",r:"AP ELETRICIDADE.pdf — pág. 57",img:IMG.paralelo3},
+ {p:"O fusível deve ser ligado...",a:["Em paralelo com a carga","Em série com o circuito de carga, na linha de fase viva","No neutro, sempre","No terra"],c:1,e:"O fusível é sempre ligado em série com a carga e na fase viva (ou no + DC).",r:"AP ELETRICIDADE.pdf — pág. 32",img:IMG.fusivelFase},
+ {p:"O disjuntor deve ser ligado...",a:["No fio neutro","No fio de fase viva da rede elétrica, nunca no neutro","No fio terra","Em paralelo com a carga"],c:1,e:"A apostila determina: disjuntor sempre na fase viva, nunca no neutro.",r:"AP ELETRICIDADE.pdf — pág. 33",img:IMG.disjuntor},
+ {p:"O interruptor simples é ligado entre quais fios?",a:["Neutro e terra","Fase viva e retorno","Fase e neutro","Terra e retorno"],c:1,e:"O fio da fase viva entra no interruptor; o retorno sai dele para a carga.",r:"AP ELETRICIDADE.pdf — pág. 32 e 63",img:IMG.interruptor},
+ {p:"Por que o interruptor NÃO deve ser ligado no fio neutro?",a:["Porque não funciona","Porque o circuito desliga, mas permanece energizado pela fase viva, com risco de choque","Porque o neutro é azul","Porque a corrente não passa pelo neutro"],c:1,e:"Com interruptor no neutro, mesmo desligado o circuito continua energizado pela fase.",r:"AP ELETRICIDADE.pdf — pág. 65",img:IMG.interruptor},
+ {p:"A diferença entre fio elétrico e cabo elétrico é...",a:["Fio é peça única rígida; cabo é um conjunto de filetes flexíveis","Cabo é sempre de alumínio","Fio é flexível e cabo é rígido","Não existe diferença"],c:0,e:"O fio geralmente é uma peça única rígida; o cabo é formado por filetes de cobre flexíveis.",r:"AP ELETRICIDADE.pdf — pág. 40",img:IMG.ohm2},
+ {p:"Um curto-circuito ocorre quando a resistência do circuito...",a:["Fica muito alta","Passa a ser muito baixa, próxima de zero, gerando corrente elevadíssima","Fica infinita","É igual a 100 Ω"],c:1,e:"No curto, a resistência fica próxima de zero e a corrente atinge intensidade elevadíssima.",r:"AP ELETRICIDADE.pdf — pág. 20",img:IMG.curtoBateria},
+ {p:"Colocando um fio diretamente entre o positivo e o negativo da bateria (curto na bateria), em um circuito com resistor e LED...",a:["O resistor e o LED queimam","Nem o resistor nem o LED queimam, mas a bateria descarrega rapidamente","A tensão da bateria aumenta","O LED brilha mais forte"],c:1,e:"No curto direto na bateria, a corrente elevadíssima descarrega a bateria rapidamente.",r:"AP ELETRICIDADE.pdf — pág. 20",img:IMG.curtoBateria},
+ {p:"Colocando um fio em curto nos terminais do RESISTOR, em um circuito com bateria de 9 V e LED...",a:["O LED queima, pois passa a receber os 9 V diretos da bateria","O LED apaga e não queima","Nada acontece","O resistor acende"],c:0,e:"Com o resistor em curto, ele perde a função; o LED não suporta 9 V (máximo ~2 V) e queima.",r:"AP ELETRICIDADE.pdf — pág. 21",img:IMG.curtoResistor},
+ {p:"Colocando um fio em curto nos terminais do LED (carga), em série com o resistor...",a:["O LED queima imediatamente","O LED apaga, mas não queima; a corrente aumenta e o resistor aquece","O LED brilha mais forte","A polaridade se inverte"],c:1,e:"O curto na carga apaga o LED sem queimá-lo; a corrente aumenta e aquece o resistor.",r:"AP ELETRICIDADE.pdf — pág. 22",img:IMG.curtoLED},
+ {p:"Chamamos de 'semicurto' o circuito ou componente que...",a:["Teve sua resistência reduzida abaixo do valor normal, causando corrente mais elevada","Está totalmente aberto","Tem resistência infinita","Funciona sem corrente"],c:0,e:"No semicurto, a resistência se aproxima de zero, elevando a corrente acima do definido pelo fabricante.",r:"AP ELETRICIDADE.pdf — pág. 20",img:IMG.curtoResistor},
+ {p:"Se o diodo retificador de uma fonte entrar em curto ou fuga, ele irá...",a:["Aumentar a tensão de saída","Disparar o fusível de entrada da fonte de alimentação","Melhorar a filtragem","Não alterar o circuito"],c:1,e:"Diodo em curto ou fuga dispara o fusível de entrada da fonte DC.",r:"AP ELETRICIDADE.pdf — pág. 19",img:IMG.diodo},
+ {p:"O alicate amperímetro funciona captando...",a:["O campo magnético variável gerado pela corrente no condutor","A temperatura do fio","A luz emitida pela carga","A eletricidade estática do ar"],c:0,e:"Seu princípio é a indução eletromagnética: capta o campo magnético do fio e indica a corrente.",r:"AP ELETRICIDADE.pdf — pág. 49",img:IMG.alicate},
+ {p:"O transformador só funciona corretamente com...",a:["Tensão contínua constante","Tensão alternada (AC)","Pilhas ligadas em DC","Eletricidade estática"],c:1,e:"Só funciona corretamente com campo magnético variável, ou seja, corrente alternada.",r:"AP ELETRICIDADE.pdf — pág. 65",img:IMG.trafo},
+ {p:"A tomada TUG (uso geral) pode alimentar cargas com corrente de até...",a:["10 A","20 A","5 A","50 A"],c:0,e:"TUG = Tomada de Uso Geral, até 10 A.",r:"AP ELETRICIDADE.pdf — pág. 65",img:IMG.tomada},
+ {p:"A tomada TUE (uso específico) pode alimentar cargas com corrente de até...",a:["10 A","20 A","32 A","2 A"],c:1,e:"TUE = Tomada de Uso Específico, até 20 A.",r:"AP ELETRICIDADE.pdf — pág. 65",img:IMG.tomada},
+ {p:"O disjuntor é uma chave...",a:["Apenas manual","Termomagnética, de efeito retardado","Química","Fotovoltaica"],c:1,e:"O disjuntor é uma chave termomagnética de efeito retardado.",r:"AP ELETRICIDADE.pdf — pág. 33",img:IMG.disjuntor},
+ {p:"Uma rede monofásica é formada por...",a:["Três fases e um neutro","Dois cabos: fase viva e neutro","Apenas um cabo de fase","Somente cabos de terra"],c:1,e:"A rede monofásica tem um cabo de fase viva e um cabo de neutro, com a mesma seção do terra.",r:"AP ELETRICIDADE.pdf — pág. 65",img:IMG.interruptor},
+ {p:"A caneta sensora detecta tensão AC através...",a:["Do acoplamento capacitivo, captando o campo elétrico variável","Do contato direto com o cobre","Da indução magnética apenas","Do aquecimento do fio"],c:0,e:"Ela capta o campo elétrico variável (acoplamento capacitivo), geralmente entre 90 V e 1000 V AC.",r:"AP ELETRICIDADE.pdf — pág. 63-64",img:IMG.caneta},
+ {p:"Na série triboelétrica da apostila (Vidro – Cabelo – Lã – Papel – Borracha), ao esfregar VIDRO em BORRACHA...",a:["Ambos ficam neutros","O vidro fica positivo e a borracha negativa","O vidro fica negativo e a borracha positiva","Ambos ficam positivos"],c:1,e:"Quanto mais à esquerda da série, mais facilmente o material perde elétrons: o vidro perde elétrons para a borracha.",r:"AP ELETRICIDADE.pdf — pág. 7",img:IMG.atrito},
+ {p:"Duas esferas condutoras idênticas, uma com −2C e outra com +1C, são colocadas em contato. Após o contato, cada esfera fica com...",a:["−2 C e +1 C","−0,5 C cada","0 C cada","+3 C cada"],c:1,e:"A carga total (−2 + 1 = −1 C) se divide igualmente entre esferas do mesmo tamanho: −0,5 C em cada.",r:"AP ELETRICIDADE.pdf — pág. 7-8",img:IMG.esferas},
+ {p:"No experimento do pêndulo, o disco de alumínio é atraído pelo canudo eletrizado devido...",a:["À polarização das cargas elétricas no metal","À força magnética do canudo","Ao peso do disco","À temperatura do canudo"],c:0,e:"A aproximação das cargas negativas do canudo polariza as cargas no disco metálico, causando atração.",r:"AP ELETRICIDADE.pdf — pág. 8",img:IMG.pendulo},
+ {p:"Às vezes, após o contato, o disco do pêndulo passa a ser REPELIDO pelo canudo porque...",a:["Elétrons em excesso do canudo passam para o metal e ambos ficam negativos","O disco perde toda a carga","O canudo se descarrega","O disco vira um ímã"],c:0,e:"Alguns elétrons do canudo são transferidos ao metal; ambos ficam negativos e ocorre repulsão.",r:"AP ELETRICIDADE.pdf — pág. 9",img:IMG.pendulo},
+ {p:"Medindo uma bateria BOA e totalmente carregada sem carga, o multímetro indica...",a:["Exatamente a tensão nominal","Um valor aproximadamente 5% superior à tensão nominal","Zero volt","Um valor 5% inferior"],c:1,e:"Bateria boa e carregada indica ddp cerca de 5% superior à nominal impressa no corpo.",r:"AP ELETRICIDADE.pdf — pág. 30",img:IMG.bateria},
+ {p:"Um transformador 12V+12V foi medido SEM CARGA no secundário, entre os dois extremos, com 27,2V em vez dos 24V nominais. Isso ocorre porque...",a:["O transformador está queimado","Não há circuito de carga ligado no secundário, elevando a tensão medida","O multímetro está quebrado","A corrente é muito alta"],c:1,e:"Sem carga no secundário, a tensão medida fica acima do valor indicado pelo fabricante.",r:"AP ELETRICIDADE.pdf — pág. 28",img:IMG.trafo},
+ {p:"Concluímos que um transformador está com DEFEITO quando a tensão no secundário SEM CARGA é...",a:["Superior à nominal","Inferior ou igual ao valor indicado pelo fabricante","Sempre 24 V","Zero"],c:1,e:"Com o primário na tensão nominal, o secundário sem carga deveria indicar valor superior ao nominal; se vier inferior ou igual, há defeito.",r:"AP ELETRICIDADE.pdf — pág. 29",img:IMG.trafo},
+ {p:"Um multímetro selecionado na escala de 200 mV examina uma ddp máxima de...",a:["200 V","20 V","2 V","0,2 V"],c:3,e:"200 mV = 0,2 V: é a ddp máxima que essa escala examina.",r:"AP ELETRICIDADE.pdf — pág. 24",img:IMG.multimetro},
+ {p:"Um multímetro na escala de 10 A pode examinar corrente máxima de...",a:["10 mA","100 mA","10.000 mA","1 A"],c:2,e:"10 A = 10.000 mA: é o valor máximo de corrente dessa escala.",r:"AP ELETRICIDADE.pdf — pág. 25",img:IMG.multimetro},
+ {p:"As escalas para medir corrente ALTERNADA (AC) existem...",a:["Em qualquer multímetro simples","Somente nos multímetros profissionais","Somente nos analógicos","Em nenhum multímetro"],c:1,e:"Só os multímetros profissionais possuem escalas para medir corrente alternada.",r:"AP ELETRICIDADE.pdf — pág. 25",img:IMG.multimetro},
+ {p:"Ao medir corrente alternada (AC) em série com o multímetro...",a:["A polaridade das ponteiras deve ser rigorosamente respeitada","Não é preciso se preocupar com a polaridade das ponteiras, pois tensão e corrente são alternadas","Usa-se sempre a escala DC","O circuito deve permanecer aberto"],c:1,e:"Em medições AC não há polaridade fixa: tensão e corrente são alternadas.",r:"AP ELETRICIDADE.pdf — pág. 29",img:IMG.multimetro},
+ {p:"Para medir corrente contínua (DC) na prática, devemos...",a:["Ligar o multímetro em paralelo","Abrir o circuito, aplicando a ponteira vermelha no ponto de onde provém a energia e a preta no outro ponto aberto","Encostar as ponteiras nos polos da fonte","Medir com o circuito desligado"],c:1,e:"Abre-se o circuito; a vermelha fica no ponto de onde provém a energia e a preta no outro ponto aberto.",r:"AP ELETRICIDADE.pdf — pág. 29",img:IMG.multimetro},
+ {p:"Multímetros TRUE RMS se destacam porque...",a:["Medem o valor eficaz correto mesmo de tensões e correntes AC não senoidais","Medem apenas DC","Não possuem escalas ôhmicas","São os mais baratos"],c:0,e:"Multímetro comum indica valor inferior ao correto em ondas não senoidais; o TRUE RMS mede o valor eficaz correto.",r:"AP ELETRICIDADE.pdf — pág. 27 e 58",img:IMG.multimetro},
+ {p:"Segundo a apostila, já devemos ter muito cuidado com choque elétrico em corrente alternada superior a...",a:["30 mA","10 A","220 mA","5 A"],c:0,e:"Corrente AC acima de 30 mA já representa grande perigo de choque elétrico.",r:"AP ELETRICIDADE.pdf — pág. 25",img:IMG.multimetro},
+ {p:"Testando um interruptor na continuidade: com ele ACIONADO o visor indica ___ e com ele SOLTO indica ___.",a:["0 Ω / infinito (I)","Infinito / 0 Ω","Sempre 0 Ω","Sempre infinito"],c:0,e:"Acionado (fechado): 0 Ω, há continuidade. Solto (aberto): I, resistência acima da escala.",r:"AP ELETRICIDADE.pdf — pág. 27",img:IMG.continuidade},
+ {p:"Um componente em curto passa a trabalhar como...",a:["Um isolante","Um fio condutor com resistência igual a zero ohm","Um capacitor","Um resistor de alto valor"],c:1,e:"Um componente em curto passa a trabalhar como um fio condutor, com resistência igual a zero ohm.",r:"AP ELETRICIDADE.pdf — pág. 22",img:IMG.curtoBateria},
+ {p:"Sobre resistores, a apostila informa que...",a:["O resistor pode entrar em curto, indo a zero ohm","Um resistor NÃO entra em curto, ou seja, não diminui seu valor ôhmico nominal para zero","Resistores nunca falham","Resistores conduzem nos dois sentidos como diodos"],c:1,e:"Você sabia: um resistor não entra em curto, não diminui seu valor ôhmico nominal para zero.",r:"AP ELETRICIDADE.pdf — pág. 52",img:IMG.resistor},
+ {p:"Em um circuito desenergizado, um resistor COM DEFEITO soldado em uma placa, medido nas escalas ôhmicas, indicará...",a:["Zero ohm","Valor inferior ao nominal","Valor superior ao seu valor nominal","Exatamente o valor nominal"],c:2,e:"Um resistor com defeito (aberto) indicará valor ôhmico superior ao seu valor nominal.",r:"AP ELETRICIDADE.pdf — pág. 54",img:IMG.resistor},
+ {p:"Em um circuito série com bateria, resistor e LED: se o resistor estiver ABERTO, o multímetro indica na ddp do LED...",a:["9 V","0 V","4,5 V","1,8 V"],c:1,e:"Com o circuito aberto não há corrente; a ddp no LED é 0 V (exemplo da fig. 50D).",r:"AP ELETRICIDADE.pdf — pág. 41",img:IMG.ledResistor},
+ {p:"Em um circuito série com resistor e LED, o LED queimou (abriu). A ddp no resistor passa a ser...",a:["A tensão total da bateria","0 V","1,8 V","Metade da bateria"],c:1,e:"Sem corrente, o resistor não trabalha: não provoca queda de tensão (ddp = 0 V, fig. 50E).",r:"AP ELETRICIDADE.pdf — pág. 42",img:IMG.ledResistor},
+ {p:"No circuito anterior (LED aberto em série), medindo a tensão entre os terminais do próprio LED aberto, o multímetro indica...",a:["0 V","1,8 V","A tensão total da fonte (ex.: 9,6 V)","Valor negativo"],c:2,e:"Como não há corrente, o resistor não provoca queda; a tensão da fonte aparece toda sobre o LED aberto (fig. 50F).",r:"AP ELETRICIDADE.pdf — pág. 42",img:IMG.ledResistor},
+ {p:"Ao ligar baterias em PARALELO, as correntes...",a:["Se somam","Não se somam: a corrente fornecida é a mesma, porém por mais tempo","Sempre dobram","Zeram"],c:1,e:"Em paralelo não somamos as correntes: a corrente é a mesma, mas o conjunto alimenta por mais tempo.",r:"AP ELETRICIDADE.pdf — pág. 62",img:IMG.pilhaParalelo},
+ {p:"Ao ligar baterias em SÉRIE com tensões diferentes, a corrente de consumo da carga...",a:["É a soma das correntes de cada bateria","Será a mesma ainda que as tensões das baterias sejam diferentes","Sempre zero","Dobra"],c:1,e:"Em série a corrente de consumo é a mesma, ainda que as tensões das baterias sejam diferentes.",r:"AP ELETRICIDADE.pdf — pág. 62",img:IMG.pilhaSerie},
+ {p:"Com 1 bateria de 9V era possível acender 5 LEDs por 1 hora. Com 2 baterias iguais em PARALELO, o tempo será de aproximadamente...",a:["30 minutos","1 hora","2 horas","4 horas"],c:2,e:"A tensão é a mesma (9 V), mas a duração dobra: 2 horas.",r:"AP ELETRICIDADE.pdf — pág. 62",img:IMG.pilhaParalelo},
+ {p:"A caneta sensora de tensão AC acende e bipa quando aproximada...",a:["Do fio neutro","Do fio fase viva ou do fio de retorno","Do fio terra","De qualquer fio desenergizado"],c:1,e:"O LED acende e bipa perto da fase viva ou do retorno; no neutro (azul) não acende.",r:"AP ELETRICIDADE.pdf — pág. 63",img:IMG.caneta},
+ {p:"Na instalação da apostila, a ordem correta do caminho da fase viva é...",a:["Rede → fusível → disjuntor → interruptor → retorno → carga","Rede → interruptor → fusível → carga","Carga → disjuntor → rede","Rede → neutro → carga diretamente"],c:0,e:"A fase viva sai da rede, passa pelo fusível, pelo disjuntor e pelo interruptor; o retorno vai até a carga.",r:"AP ELETRICIDADE.pdf — pág. 63",img:IMG.interruptor},
+ {p:"O condutor NEUTRO (azul)...",a:["Pode ser ligado no interruptor sem problemas","Nunca deverá ser ligado em um interruptor","Deve ser ligado no disjuntor","É sempre ligado na fase"],c:1,e:"O condutor neutro de cor azul nunca deverá ser ligado em um interruptor.",r:"AP ELETRICIDADE.pdf — pág. 32",img:IMG.interruptor},
+ {p:"A potência total consumida por um circuito SÉRIE pode ser determinada por...",a:["Tensão total × corrente do circuito","Soma das resistências × tensão","Corrente ÷ tensão","Tensão de cada componente apenas"],c:0,e:"Mede-se a tensão total e a corrente: potência total (W) = tensão (V) × corrente (A).",r:"AP ELETRICIDADE.pdf — pág. 50",img:IMG.serie3},
+ {p:"Em um circuito série examinado com alicate amperímetro em vários pontos (ex.: 20 mA), a corrente...",a:["Diminui ao longo do circuito","É sempre a mesma em todos os pontos","Aumenta em cada componente","Só existe no primeiro ponto"],c:1,e:"Mesmo mudando a posição do alicate, a corrente é a mesma em todos os pontos do circuito série.",r:"AP ELETRICIDADE.pdf — pág. 50",img:IMG.serie3},
+ {p:"Em um circuito paralelo de lâmpadas, retirando-se uma delas, a corrente total...",a:["Aumenta","Permanece igual","Reduz, pois era a soma das correntes individuais","Vai a zero"],c:2,e:"A corrente total é a soma das individuais; retirando uma lâmpada, ela reduz (ex.: 198 mA → 138 mA).",r:"AP ELETRICIDADE.pdf — pág. 58",img:IMG.paralelo3},
+ {p:"Em um grupo de várias lâmpadas, a de MAIOR potência em watts é a que tem...",a:["Maior resistência","Menor resistência entre elas","Resistência infinita","Mesma resistência das demais"],c:1,e:"Você sabia: em um grupo de lâmpadas, a de maior potência em watts é a de menor resistência.",r:"AP ELETRICIDADE.pdf — pág. 57",img:IMG.lampada},
+ {p:"Em um circuito paralelo, a potência total de consumo é...",a:["A soma das potências individuais de cada componente em funcionamento","A potência do maior componente","Sempre igual à tensão","A divisão pela corrente"],c:0,e:"Lei básica do paralelo: a potência total é a soma das potências individuais.",r:"AP ELETRICIDADE.pdf — pág. 51",img:IMG.paralelo3},
+ {p:"Testando dois pontos de uma trilha de protoboard pela continuidade, o multímetro indicou 0 Ω. Conclusão...",a:["A trilha está rompida","Os dois pontos estão interligados (há continuidade)","Existe curto na placa","A escala está errada"],c:1,e:"Zero ohm entre dois pontos indica que as trilhas estão fazendo contato, interligadas.",r:"AP ELETRICIDADE.pdf — pág. 27",img:IMG.continuidade},
+ {p:"Para examinar uma resistência elétrica abaixo de aproximadamente 1,5 Ω, podemos usar...",a:["A escala de continuidade ou as escalas de 200 Ω / 2000 Ω","A escala de 200 MΩ","A escala de tensão AC","A escala de 10 A"],c:0,e:"Quando o valor ôhmico for abaixo de ~1,5 Ω, use a continuidade ou escalas como 200 ou 2000.",r:"AP ELETRICIDADE.pdf — pág. 47",img:IMG.multimetro},
+ {p:"Um fusível colocado ERRADO no fio neutro, em caso de curto na carga...",a:["Não queima","Queima e protege a carga, mas todo o circuito ficará energizado — perigoso","Aumenta a tensão","Queima a carga"],c:1,e:"O fusível dispara mesmo no neutro, mas todo o circuito ficará energizado: por isso não devemos usá-lo no neutro.",r:"AP ELETRICIDADE.pdf — pág. 37",img:IMG.fusivelFase},
+ {p:"O disjuntor, mesmo ligado erradamente no neutro, em caso de curto elétrico na instalação...",a:["Não desliga","Irá desligar da mesma forma como se estivesse ligado na fase viva","Queima","Dobra a corrente"],c:1,e:"Item 15 da apostila: mesmo no neutro, ele desliga da mesma forma — mas a instalação fica energizada.",r:"AP ELETRICIDADE.pdf — pág. 65",img:IMG.disjuntor},
+ {p:"Sobre o fio de RETORNO em uma instalação funcionando normalmente...",a:["Nunca pode provocar choque","Pode provocar choque elétrico","É sempre azul","Não conduz corrente"],c:1,e:"O retorno conduz corrente e tensão até a carga: pode provocar choque (exercício 113).",r:"AP ELETRICIDADE.pdf — Lista, pág. 75",img:IMG.interruptor},
+ {p:"Em um circuito monofásico funcionando normalmente, a corrente no fio fase viva é... em relação à do neutro.",a:["Sempre de mesmo valor","Sempre maior","Sempre menor","Zero"],c:0,e:"Exercício 112: a corrente da fase viva deve ser sempre de mesmo valor que a do neutro.",r:"AP ELETRICIDADE.pdf — Lista, pág. 75",img:IMG.interruptor},
+ {p:"Ao cortar o fio neutro (azul) de um circuito EM FUNCIONAMENTO em duas partes...",a:["Nenhuma parte dá choque","Uma das partes poderá provocar choque elétrico","As duas partes ficam sem corrente","O circuito continua funcionando normal"],c:1,e:"Com o circuito funcionando há corrente no neutro: uma das partes cortadas pode provocar choque.",r:"AP ELETRICIDADE.pdf — Lista, pág. 76",img:IMG.interruptor},
+ {p:"Em um circuito série com resistências IGUAIS, as ddp's em cada uma serão...; adicionando uma lâmpada de potência diferente, as ddp's...",a:["Iguais / serão diferentes","Diferentes / serão iguais","Zero / infinitas","Iguais / iguais"],c:0,e:"Resistências iguais → ddp's iguais; resistência diferente → ddp diferente (pág. 46).",r:"AP ELETRICIDADE.pdf — pág. 46",img:IMG.serie3},
+ {p:"Convertendo 0,02 A para miliampères, obtemos...",a:["2 mA","20 mA","200 mA","2000 mA"],c:1,e:"0,02 A × 1000 = 20 mA.",r:"AP ELETRICIDADE.pdf — pág. 37",img:IMG.multimetro},
+ {p:"Os resistores de potência (resistores de fio) são fabricados com a liga...",a:["Níquel-cromo","Cobre puro","Prata","Alumínio"],c:0,e:"Você sabia: as ligas usadas podem ser ferro-cromo-alumínio e níquel-cromo para altas temperaturas.",r:"AP ELETRICIDADE.pdf — pág. 41",img:IMG.resistor},
+ {p:"Segundo a lei de Kirchhoff citada na apostila, NÓ e MALHA são...",a:["Nó: encontro de três ou mais fios; malha: percurso fechado que inicia em um nó e volta ao mesmo ponto","Nó: fio rompido; malha: curto","Nó: resistor; malha: capacitor","Nó: tensão; malha: corrente"],c:0,e:"A lei de Kirchhoff informa que nó é o encontro de três ou mais fios e malha é o percurso fechado.",r:"AP ELETRICIDADE.pdf — Lista, pág. 76",img:IMG.no}
+];
+
+/* ==================== BANCO DIFÍCIL (80) ==================== */
+var BANCO_DIFICIL=[
+ {p:"A 1ª Lei de Ohm é expressa pela fórmula...",a:["V = R × I","P = V × I","R = ρ × L / A","Vpp = 2 × Vp"],c:0,e:"A diferença de potencial em um resistor é igual à resistência vezes a corrente.",r:"AP ELETRICIDADE.pdf — pág. 36",img:IMG.resistor},
+ {p:"Um resistor de 10 Ω é percorrido por corrente de 2 A. A tensão sobre ele é...",a:["5 V","12 V","20 V","0,2 V"],c:2,e:"V = R × I = 10 × 2 = 20 V.",r:"AP ELETRICIDADE.pdf — pág. 36",img:IMG.resistor},
+ {p:"Um resistor de 10 Ω é submetido a 20 V. A corrente que o atravessa é...",a:["2 A","200 A","0,5 A","10 A"],c:0,e:"I = V / R = 20 / 10 = 2 A.",r:"AP ELETRICIDADE.pdf — pág. 36",img:IMG.resistor},
+ {p:"Em um resistor medimos 12 V e corrente de 3 A. Sua resistência é...",a:["36 Ω","15 Ω","9 Ω","4 Ω"],c:3,e:"R = V / I = 12 / 3 = 4 Ω.",r:"AP ELETRICIDADE.pdf — pág. 36",img:IMG.resistor},
+ {p:"Uma carga é alimentada com 12 V e consome 2 A. Sua potência é...",a:["6 W","10 W","24 W","144 W"],c:2,e:"P = V × I = 12 × 2 = 24 W.",r:"AP ELETRICIDADE.pdf — pág. 18",img:IMG.potencia},
+ {p:"Um resistor de 5 Ω é submetido a 10 V. A potência dissipada é...",a:["2 W","20 W","50 W","0,5 W"],c:1,e:"P = V²/R = 100/5 = 20 W.",r:"AP ELETRICIDADE.pdf — pág. 18",img:IMG.potencia},
+ {p:"A corrente em um resistor de 100 Ω é 0,5 A. A potência dissipada é...",a:["25 W","50 W","200 W","5 W"],c:0,e:"P = R × I² = 100 × 0,25 = 25 W.",r:"AP ELETRICIDADE.pdf — pág. 18",img:IMG.potencia},
+ {p:"A 2ª Lei de Ohm é expressa pela fórmula...",a:["R = ρ × L / A","V = R × I","P = V × I","Vp = Vef × √2"],c:0,e:"A resistência depende da resistividade (ρ), do comprimento (L) e da área da seção (A).",r:"AP ELETRICIDADE.pdf — pág. 38",img:IMG.resistor},
+ {p:"Mantendo o material e a espessura, ao aumentar o comprimento do fio, sua resistência...",a:["Aumenta","Diminui","Não muda","Vira zero"],c:0,e:"A resistência é diretamente proporcional ao comprimento do condutor.",r:"AP ELETRICIDADE.pdf — pág. 38",img:IMG.ohm2},
+ {p:"Ao aumentar a área da seção transversal do condutor (fio mais grosso), sua resistência...",a:["Aumenta","Diminui","Não muda","Fica infinita"],c:1,e:"A resistência é inversamente proporcional à área da seção transversal.",r:"AP ELETRICIDADE.pdf — pág. 38",img:IMG.ohm2},
+ {p:"Entre os materiais abaixo, o de menor resistividade (melhor condutor) é...",a:["Cobre","Prata","Ouro","Alumínio"],c:1,e:"Prata: 1,6×10⁻⁸; cobre: 1,7×10⁻⁸; ouro: 2,3×10⁻⁸; alumínio: 2,8×10⁻⁸ Ω·m.",r:"AP ELETRICIDADE.pdf — pág. 40",img:IMG.ohm2},
+ {p:"Apesar de não ser o melhor condutor, é considerado o melhor condutor que NÃO oxida...",a:["Prata","Ouro","Cobre","Alumínio"],c:1,e:"O ouro é o melhor condutor que não oxida.",r:"AP ELETRICIDADE.pdf — pág. 40",img:IMG.ohm2},
+ {p:"Convertendo 7,7 mA para ampères, obtemos...",a:["0,077 A","0,0077 A","77 A","7700 A"],c:1,e:"Para converter mA em A, divide-se por 1000: 7,7 / 1000 = 0,0077 A.",r:"AP ELETRICIDADE.pdf — pág. 37",img:IMG.multimetro},
+ {p:"O valor 1 kΩ corresponde a...",a:["10 Ω","100 Ω","1000 Ω","1.000.000 Ω"],c:2,e:"O prefixo k (quilo) significa ×1000: 1 kΩ = 1000 Ω.",r:"AP ELETRICIDADE.pdf — pág. 37",img:IMG.resistor},
+ {p:"Uma bateria de 9,5 V alimenta um LED de 1,8 V com corrente de 7,7 mA. O resistor necessário é...",a:["100 Ω","470 Ω","1 kΩ","10 kΩ"],c:2,e:"R = (9,5 − 1,8) / 0,0077 = 7,7 / 0,0077 = 1000 Ω = 1 kΩ.",r:"AP ELETRICIDADE.pdf — pág. 36",img:IMG.ledResistor},
+ {p:"Uma bateria de 9 V alimenta um LED de 2 V com corrente de 10 mA. O resistor em série é...",a:["700 Ω","900 Ω","200 Ω","70 Ω"],c:0,e:"R = (9 − 2) / 0,01 = 7 / 0,01 = 700 Ω.",r:"AP ELETRICIDADE.pdf — pág. 36",img:IMG.ledResistor},
+ {p:"A rede elétrica tem tensão eficaz de 220 V. A tensão de pico (Vp) vale aproximadamente...",a:["220 V","311 V","110 V","622 V"],c:1,e:"Vp = Vef × √2 = 220 × 1,4142 ≈ 311 V.",r:"AP ELETRICIDADE.pdf — pág. 11",img:IMG.onda},
+ {p:"Na rede senoidal de 220 V eficazes, a tensão pico a pico vale aproximadamente...",a:["440 V","622 V","311 V","220 V"],c:1,e:"Vp ≈ 311 V; Vpp = 2 × 311 ≈ 622 V.",r:"AP ELETRICIDADE.pdf — pág. 11",img:IMG.onda},
+ {p:"A saída de um transformador fornece 12 V eficazes (senoidal). A tensão pico a pico (Vpp) é aproximadamente...",a:["12 V","17 V","34 V","24 V"],c:2,e:"Vp = 12 × 1,4142 ≈ 17 V; Vpp = 2 × 17 ≈ 34 V.",r:"AP ELETRICIDADE.pdf — pág. 13",img:IMG.trafo},
+ {p:"A relação correta entre tensão de pico (Vp) e tensão eficaz (Vef) é...",a:["Vp = Vef × √2","Vp = Vef / 2","Vp = Vef × 2","Vp = Vef²"],c:0,e:"Vp = Vef × √2, onde √2 ≈ 1,4142.",r:"AP ELETRICIDADE.pdf — pág. 11",img:IMG.onda},
+ {p:"Três lâmpadas em série apresentam tensões de 78 V, 68 V e 87 V. A tensão total do circuito é...",a:["233 V","115 V","78 V","220 V"],c:0,e:"78 + 68 + 87 = 233 V — exatamente a tensão total medida no experimento.",r:"AP ELETRICIDADE.pdf — pág. 45-46",img:IMG.serie3},
+ {p:"Dois resistores de 470 Ω ligados em série resultam em resistência equivalente de aproximadamente...",a:["235 Ω","940 Ω","470 Ω","47 Ω"],c:1,e:"470 + 470 = 940 Ω (a apostila mediu 928 Ω, dentro da tolerância de 5%).",r:"AP ELETRICIDADE.pdf — pág. 47",img:IMG.serie3},
+ {p:"Dois resistores de 1 kΩ em paralelo têm resistência equivalente de...",a:["2 kΩ","500 Ω","1 kΩ","250 Ω"],c:1,e:"Para resistores iguais: Req = R/n = 1000/2 = 500 Ω.",r:"AP ELETRICIDADE.pdf — pág. 52",img:IMG.paralelo3},
+ {p:"Três lâmpadas iguais de 324 Ω, em paralelo, têm resistência equivalente de aproximadamente...",a:["324 Ω","162 Ω","108 Ω","972 Ω"],c:2,e:"Req = 324/3 = 108 Ω (a apostila mediu 109 Ω).",r:"AP ELETRICIDADE.pdf — pág. 55",img:IMG.paralelo3},
+ {p:"Três lâmpadas de 100 W / 220 V ligadas em paralelo na rede de 220 V consomem potência total de...",a:["100 W","220 W","300 W","33 W"],c:2,e:"Potência total = 3 × 100 = 300 W.",r:"AP ELETRICIDADE.pdf — Lista, pág. 72",img:IMG.paralelo3},
+ {p:"Três lâmpadas de 100 W / 220 V em paralelo na rede de 220 V consomem corrente total de aproximadamente...",a:["0,45 A","1,36 A","3 A","10 A"],c:1,e:"I = P/V = 300/220 ≈ 1,36 A.",r:"AP ELETRICIDADE.pdf — Lista, pág. 72",img:IMG.paralelo3},
+ {p:"Uma tomada TUE (20 A) ligada em uma rede de 220 V pode alimentar carga com potência máxima de...",a:["2200 W","2540 W","4400 W","200 W"],c:2,e:"P = V × I = 220 × 20 = 4400 W.",r:"AP ELETRICIDADE.pdf — Lista, pág. 72",img:IMG.tomada},
+ {p:"Colocando a ponteira vermelha em um ponto de +12 V e a preta em um ponto de −12 V, o multímetro indicará...",a:["0 V","12 V","24 V","−24 V"],c:2,e:"A ddp entre +12 V e −12 V é 12 − (−12) = 24 V.",r:"AP ELETRICIDADE.pdf — Lista, pág. 71",img:IMG.multimetro},
+ {p:"Qual a ddp entre um ponto A com +15 V e um ponto B com +5 V?",a:["20 V","15 V","5 V","10 V"],c:3,e:"A ddp é a diferença: 15 − 5 = 10 V.",r:"AP ELETRICIDADE.pdf — Lista, pág. 72",img:IMG.multimetro},
+ {p:"Em um circuito série, o componente de maior resistência...",a:["Fica com a menor tensão","Fica com a maior tensão (ddp) entre seus terminais","Fica com tensão zero","Fica sem corrente"],c:1,e:"Como a corrente é a mesma, a maior resistência provoca a maior ddp (V = R × I).",r:"AP ELETRICIDADE.pdf — pág. 49",img:IMG.serie3},
+ {p:"Em um circuito paralelo, o resistor que MAIS aquece é...",a:["O de maior valor ôhmico","O de menor valor ôhmico","O primeiro do circuito","Nenhum aquece"],c:1,e:"Como a tensão é a mesma, o de menor resistência é percorrido por maior corrente (P = V²/R), aquecendo mais.",r:"AP ELETRICIDADE.pdf — pág. 55",img:IMG.paralelo3},
+ {p:"Duas baterias de 12 V em série alimentam dois LEDs de 1,8 V / 10 mA em série com um resistor. O valor do resistor é...",a:["2,04 kΩ","1,8 kΩ","204 Ω","12,2 kΩ"],c:0,e:"V total = 24 V; V LEDs = 3,6 V; R = (24 − 3,6)/0,01 = 2040 Ω.",r:"AP ELETRICIDADE.pdf — Lista, pág. 74",img:IMG.ledResistor},
+ {p:"No circuito anterior (R = 2040 Ω, I = 10 mA), a potência dissipada no resistor é aproximadamente...",a:["0,2 W","2 W","20 W","0,02 W"],c:0,e:"P = R × I² = 2040 × (0,01)² ≈ 0,204 W.",r:"AP ELETRICIDADE.pdf — Lista, pág. 74",img:IMG.ledResistor},
+ {p:"Tenho uma fonte de 24 V e lâmpadas de 6 V. Para ligá-las em série diretamente, quantas lâmpadas devo usar?",a:["4","6","8","2"],c:0,e:"Em série as tensões se somam: 24 V ÷ 6 V = 4 lâmpadas.",r:"AP ELETRICIDADE.pdf — Lista, pág. 72",img:IMG.serie3},
+ {p:"Um resistor alimenta um circuito de carga que queimou (abriu). A ddp nesse resistor passa a ser...",a:["A tensão total da fonte","0 V","Metade da fonte","Infinita"],c:1,e:"Sem corrente (carga aberta), o resistor não provoca queda de tensão: ddp nele é 0 V.",r:"AP ELETRICIDADE.pdf — Lista, pág. 72",img:IMG.ledResistor},
+ {p:"Duas baterias de 9 V carregadas, ligadas em série e medidas sem carga, indicaram...",a:["Exatamente 18,0 V","Aproximadamente 19 V (ex.: 19,04 V), pois estão totalmente carregadas","9 V","Zero"],c:1,e:"Baterias boas e carregadas indicam tensão superior à nominal; o experimento mediu 19,04 V.",r:"AP ELETRICIDADE.pdf — pág. 43",img:IMG.pilhaSerie},
+ {p:"A queda de tensão máxima permitida pela NBR-5410 é 5%. Em uma rede de 220 V, a tensão mínima na carga pode ser...",a:["209 V","190 V","220 V","110 V"],c:0,e:"220 × 0,95 = 209 V — valor mínimo permitido na carga pela norma.",r:"AP ELETRICIDADE.pdf — pág. 39",img:IMG.tomada},
+ {p:"Comparando um fio de cobre e um de níquel-cromo de mesmas dimensões, a resistência do níquel-cromo é...",a:["Menor, pois é melhor condutor","Maior, pois sua resistividade é mais elevada","Igual","Zero"],c:1,e:"O níquel-cromo possui resistividade mais elevada que o cobre (usado em resistências de aquecimento).",r:"AP ELETRICIDADE.pdf — pág. 38-39",img:IMG.ohm2},
+ {p:"Para resistores de valores diferentes em paralelo, a resistência equivalente é calculada por...",a:["1/Req = 1/R1 + 1/R2 + ...","Req = R1 + R2 + ...","Req = R1 × R2","Req = R1 − R2"],c:0,e:"A soma dos inversos das resistências dá o inverso da resistência equivalente.",r:"AP ELETRICIDADE.pdf — pág. 53",img:IMG.paralelo3},
+ {p:"Comparando duas lâmpadas incandescentes de 220 V, uma de 15 W e outra de 7 W, é correto afirmar que...",a:["A de 7 W tem maior resistência","A de 15 W tem maior resistência","Ambas têm a mesma resistência","A de 7 W consome mais corrente"],c:0,e:"Como P = V²/R, menor potência significa maior resistência — a de 7 W tem resistência superior a 600 Ω.",r:"AP ELETRICIDADE.pdf — pág. 47-48",img:IMG.lampada},
+ {p:"A rede elétrica tem tensão eficaz de 127 V. A tensão de pico (Vp) é aproximadamente...",a:["127 V","180 V","90 V","254 V"],c:1,e:"Vp = 127 × 1,4142 ≈ 180 V.",r:"AP ELETRICIDADE.pdf — pág. 11",img:IMG.onda},
+ {p:"Mediu-se Vpp = 38,2 V no secundário de 12 V de um transformador, em vez dos ~34 V esperados. A explicação da apostila é...",a:["O multímetro estava errado","A tensão da rede elétrica estava mais elevada que 220 V naquele momento","O transformador estava em curto","A frequência estava errada"],c:1,e:"O Vpp superior ao esperado ocorreu porque a tensão da rede estava mais elevada que 220 V no momento.",r:"AP ELETRICIDADE.pdf — pág. 13",img:IMG.onda},
+ {p:"Na fig.50C: MT1 = 9,37 V (pontos 1-3) e MT2 = 1,96 V (pontos 2-4). A ddp sobre o resistor R2 é aproximadamente...",a:["7,41 V","9,37 V","1,96 V","11,33 V"],c:0,e:"ddp no resistor = tensão total − tensão do LED = 9,37 − 1,96 = 7,41 V.",r:"AP ELETRICIDADE.pdf — pág. 41-42",img:IMG.serieMedidas},
+ {p:"Circuito misto: 470 Ω em série + conjunto de 3 resistores de 900 Ω em paralelo + 470 Ω em série. A Req total é...",a:["1240 Ω","1840 Ω","940 Ω","2840 Ω"],c:0,e:"Paralelo de iguais: 900/3 = 300 Ω; total: 470 + 300 + 470 = 1240 Ω.",r:"AP ELETRICIDADE.pdf — pág. 60",img:IMG.misto},
+ {p:"No circuito misto da fig.106A, a lâmpada que recebe a tensão TOTAL (241 V) é...",a:["L1","L3","L4","L5"],c:0,e:"A lâmpada L1 recebe a tensão total; as demais recebem valores cada vez menores.",r:"AP ELETRICIDADE.pdf — pág. 61",img:IMG.misto},
+ {p:"Nesse circuito misto, L4 e L5 (em série) recebem juntas 72 V. Sendo iguais, a ddp de cada uma é...",a:["72 V","36 V","144 V","18 V"],c:1,e:"Em série com resistências iguais, a tensão se divide igualmente: 72 / 2 = 36 V.",r:"AP ELETRICIDADE.pdf — pág. 61",img:IMG.misto},
+ {p:"Circuito paralelo alimentado com 12 V e corrente total de 1,5 A medida no alicate. A potência total é...",a:["18 W","12 W","8 W","24 W"],c:0,e:"P = V × I = 12 × 1,5 = 18 W (método da fig. 93A/B).",r:"AP ELETRICIDADE.pdf — pág. 59",img:IMG.paralelo3},
+ {p:"Correntes individuais de 62 + 63 + 64 = 189 mA com tensão de 12 V. A potência total é aproximadamente...",a:["2,27 W","12 W","0,63 W","189 W"],c:0,e:"P = V × I = 12 × 0,189 = 2,268 W ≈ 2,27 W.",r:"AP ELETRICIDADE.pdf — pág. 59",img:IMG.paralelo3},
+ {p:"Uma tomada TUG (10 A) em rede de 220 V pode alimentar potência máxima de...",a:["2200 W","1270 W","4400 W","220 W"],c:0,e:"P = V × I = 220 × 10 = 2200 W.",r:"AP ELETRICIDADE.pdf — Lista, pág. 72",img:IMG.tomada},
+ {p:"Uma tomada TUE (20 A) em rede de 127 V pode alimentar potência máxima de...",a:["2540 W","1270 W","4400 W","254 W"],c:0,e:"P = V × I = 127 × 20 = 2540 W.",r:"AP ELETRICIDADE.pdf — Lista, pág. 72",img:IMG.tomada},
+ {p:"Uma lâmpada de 100 W / 220 V em funcionamento normal consome corrente de aproximadamente... e sua resistência a quente é...",a:["0,45 A e 484 Ω","2,2 A e 100 Ω","0,9 A e 242 Ω","1 A e 220 Ω"],c:0,e:"I = P/V = 100/220 ≈ 0,45 A; R = V²/P = 48400/100 = 484 Ω.",r:"AP ELETRICIDADE.pdf — Lista, pág. 72",img:IMG.lampada},
+ {p:"Um trecho de fio de níquel-cromo mede 3,4 Ω. Aproximadamente 3 vezes esse comprimento medirá...",a:["~10,2 Ω (o experimento mostrou 9,7 Ω)","3,4 Ω","1,1 Ω","30 Ω"],c:0,e:"R é proporcional a L: 3 × 3,4 = 10,2 Ω (medido 9,7 Ω, próximo do esperado).",r:"AP ELETRICIDADE.pdf — pág. 38-39",img:IMG.ohm2},
+ {p:"Ao AQUECER, a resistência elétrica de um cabo ou fio de COBRE...",a:["Aumenta","Diminui","Não muda","Vira zero"],c:1,e:"Você sabia: a resistência elétrica de um cabo ou fio de cobre diminui quando ele aquece.",r:"AP ELETRICIDADE.pdf — pág. 38",img:IMG.ohm2},
+ {p:"Três resistores de 470 Ω em série: esperado 1410 Ω. Um valor medido aceitável, dentro da tolerância de 5%, seria...",a:["1388 Ω","1200 Ω","1500 Ω","470 Ω"],c:0,e:"1410 − 5% ≈ 1339,5 Ω; logo 1388 Ω está dentro da tolerância (valor medido no experimento).",r:"AP ELETRICIDADE.pdf — pág. 47",img:IMG.serie3},
+ {p:"Três lâmpadas em série medem 339 Ω, 329 Ω e 364 Ω. A resistência total esperada é...",a:["1032 Ω","344 Ω","693 Ω","1400 Ω"],c:0,e:"339 + 329 + 364 = 1032 Ω (o experimento mediu 1046 Ω, próximo do esperado).",r:"AP ELETRICIDADE.pdf — pág. 48",img:IMG.serie3},
+ {p:"Em um circuito SÉRIE com duas lâmpadas 15W/220V (<400 Ω) e uma 7W/220V (>600 Ω), a maior ddp aparece na lâmpada...",a:["De 15 W, pois tem menor resistência","De 7 W, pois tem maior resistência","É igual nas três","Depende da frequência"],c:1,e:"Em série, a maior resistência provoca a maior ddp — por isso a de 7 W acendeu de forma mais intensa no experimento.",r:"AP ELETRICIDADE.pdf — pág. 48-49",img:IMG.serie3},
+ {p:"9 LEDs em série são alimentados por duas baterias de 9 V em série (≈18 V). A tensão aproximada em cada LED é...",a:["1 V","2 V","9 V","18 V"],c:1,e:"18 V ÷ 9 LEDs = 2 V por LED, valor típico do LED comum.",r:"AP ELETRICIDADE.pdf — pág. 44",img:IMG.serie3},
+ {p:"Resistores de 1 kΩ, 1,5 kΩ e 4,7 kΩ em paralelo têm Req aproximada de...",a:["7,2 kΩ","532 Ω","2,35 kΩ","3,1 kΩ"],c:1,e:"1/Req = 1/1000 + 1/1500 + 1/4700 ≈ 0,00188 → Req ≈ 532 Ω.",r:"AP ELETRICIDADE.pdf — pág. 53",img:IMG.paralelo3},
+ {p:"Duas lâmpadas de 324 Ω em paralelo: esperado 162 Ω; o experimento mediu 164 Ω porque...",a:["A medição está totalmente errada","Os valores reais das lâmpadas não são idênticos de fábrica, mas o resultado está bem próximo","Resistores em paralelo somam","As lâmpadas estão em curto"],c:1,e:"Mesmo com mesma potência e tensão no corpo, as resistências das lâmpadas não são fabricadas idênticas.",r:"AP ELETRICIDADE.pdf — pág. 54",img:IMG.paralelo3},
+ {p:"Três lâmpadas de 314 Ω cada, em paralelo, têm Req teórica de aproximadamente...",a:["314 Ω","942 Ω","104,67 Ω","157 Ω"],c:2,e:"Req = R/n = 314/3 ≈ 104,67 Ω (o experimento mediu 107 Ω).",r:"AP ELETRICIDADE.pdf — pág. 55",img:IMG.paralelo3},
+ {p:"Em um circuito paralelo, as correntes dos ramos mediram 62 mA, 63 mA e 64 mA (soma 189 mA) e o alicate na entrada indicou 199 mA. Sobre isso...",a:["A medição é impossível","Os valores são próximos: a corrente total é a soma das individuais, com pequenas diferenças normais de medição","A corrente total deveria ser 64 mA","Os ramos estão em curto"],c:1,e:"A corrente geral (199 mA) é próxima da soma das individuais (189 mA); pequenas diferenças de medição são normais.",r:"AP ELETRICIDADE.pdf — pág. 57-59",img:IMG.paralelo3},
+ {p:"Três lâmpadas em paralelo consomem 198 mA. Retirando uma, cai para 138 mA. Retirando mais uma, com apenas UMA lâmpada ligada, o alicate indicou...",a:["60 mA","64 mA","138 mA","74 mA"],c:1,e:"No experimento, com apenas uma lâmpada a corrente medida foi de 64 mA.",r:"AP ELETRICIDADE.pdf — pág. 58",img:IMG.paralelo3},
+ {p:"4 lâmpadas de 150 W / 200 V em paralelo na rede de 220 V: a corrente total é aproximadamente...",a:["0,83 A","3,3 A","2,7 A","6 A"],c:1,e:"R de cada = V²/P = 200²/150 ≈ 266,7 Ω. Em 220 V: I = 220/266,7 ≈ 0,825 A cada; total ≈ 3,3 A.",r:"AP ELETRICIDADE.pdf — Lista, pág. 73",img:IMG.paralelo3},
+ {p:"Tenho uma fonte de 36 V e lâmpadas de 6 V. Ligando-as em série, quantas lâmpadas usarei?",a:["5","6","7","36"],c:1,e:"Em série as tensões se somam: 36 ÷ 6 = 6 lâmpadas.",r:"AP ELETRICIDADE.pdf — Lista, pág. 73",img:IMG.serie3},
+ {p:"Uma tomada TUG (10 A) em rede de 127 V pode alimentar potência máxima de...",a:["1270 W","2200 W","1000 W","2540 W"],c:0,e:"P = V × I = 127 × 10 = 1270 W.",r:"AP ELETRICIDADE.pdf — Lista, pág. 72",img:IMG.tomada},
+ {p:"Medindo 1,8 V de ddp em um resistor de 470 Ω, a corrente que o atravessa é aproximadamente...",a:["3,8 mA","0,26 A","260 mA","1,8 A"],c:0,e:"I = V/R = 1,8/470 ≈ 0,0038 A = 3,8 mA.",r:"AP ELETRICIDADE.pdf — pág. 38",img:IMG.resistor},
+ {p:"No fio de níquel-cromo, afastando as ponteiras do multímetro, a resistência subiu de 3,4 Ω para 9,7 Ω porque...",a:["A área do fio aumentou","A resistência é diretamente proporcional ao comprimento do fio","A resistividade mudou","O fio entrou em curto"],c:1,e:"Quanto maior o comprimento analisado do fio, maior a resistência medida (2ª Lei de Ohm).",r:"AP ELETRICIDADE.pdf — pág. 38-39",img:IMG.ohm2},
+ {p:"Uma lâmpada consome 3,8 A e a ddp medida na bateria foi de 11,6 V (não manteve 12 V). A potência aproximada consumida é...",a:["44 W","12 W","3,8 W","260 W"],c:0,e:"P = V × I = 11,6 × 3,8 ≈ 44 W.",r:"AP ELETRICIDADE.pdf — pág. 16 e 31",img:IMG.lampada},
+ {p:"A resistência do filamento da lâmpada incandescente, quando aquece em funcionamento normal...",a:["Diminui","Permanece igual à medida em temperatura ambiente","Aumenta","Zera"],c:2,e:"O valor ôhmico do filamento em temperatura ambiente é menor do que quando aquece.",r:"AP ELETRICIDADE.pdf — pág. 42",img:IMG.lampada},
+ {p:"Duas baterias de 12 V em série alimentam resistor e 2 LEDs. Se um LED queimar (abrir), a tensão DC nos DOIS terminais do resistor, em relação ao polo negativo, será...",a:["0 V nos dois terminais","24 V nos dois terminais, pois sem corrente não há queda de tensão no resistor","12 V nos dois terminais","1,8 V nos dois terminais"],c:1,e:"Com o circuito aberto não há corrente; o resistor não provoca queda: ambos os terminais ficam no potencial do positivo (24 V em relação ao negativo).",r:"AP ELETRICIDADE.pdf — Lista, pág. 74",img:IMG.ledResistor},
+ {p:"Um circuito série de lâmpadas é alimentado com 233 V e consome 20 mA. A potência total é...",a:["4,66 W","46,6 W","233 W","0,85 W"],c:0,e:"P = V × I = 233 × 0,02 = 4,66 W.",r:"AP ELETRICIDADE.pdf — pág. 45-50",img:IMG.serie3},
+ {p:"A tensão de pico de uma onda é Vp = 311 V. A tensão eficaz é aproximadamente...",a:["220 V","440 V","622 V","127 V"],c:0,e:"Vef = Vp / √2 = 311 / 1,4142 ≈ 220 V.",r:"AP ELETRICIDADE.pdf — pág. 11",img:IMG.onda},
+ {p:"Dois resistores de 2 kΩ e 3 kΩ em paralelo têm Req de...",a:["5 kΩ","1,2 kΩ","2,5 kΩ","600 Ω"],c:1,e:"Req = (2000 × 3000)/(2000 + 3000) = 6.000.000/5000 = 1200 Ω = 1,2 kΩ.",r:"AP ELETRICIDADE.pdf — pág. 53",img:IMG.paralelo3},
+ {p:"Uma lâmpada ligada em 220 V é atravessada por 0,45 A. Sua potência é aproximadamente...",a:["100 W","45 W","220 W","489 W"],c:0,e:"P = V × I = 220 × 0,45 = 99 W ≈ 100 W.",r:"AP ELETRICIDADE.pdf — Lista, pág. 72",img:IMG.lampada},
+ {p:"Em uma rede de 127 V, a queda máxima de 5% permitida pela NBR-5410 faz a tensão mínima na carga ser aproximadamente...",a:["120,6 V","110 V","127 V","63,5 V"],c:0,e:"127 × 0,95 = 120,65 V ≈ 120,6 V.",r:"AP ELETRICIDADE.pdf — pág. 39 e 65",img:IMG.tomada},
+ {p:"Quatro resistores de 1 kΩ em paralelo têm Req de...",a:["4 kΩ","1 kΩ","250 Ω","500 Ω"],c:2,e:"Req = R/n = 1000/4 = 250 Ω.",r:"AP ELETRICIDADE.pdf — pág. 52",img:IMG.paralelo3},
+ {p:"Uma bateria nominal de 9 V, boa e carregada, mediu 9,6 V sem carga. Isso indica que...",a:["A bateria está ruim","A bateria está acima da nominal em 5 a 10%, como esperado para bateria boa","O multímetro está quebrado","A bateria está em curto"],c:1,e:"Bateria boa e carregada possui tensão superior à nominal em 5 a 10%.",r:"AP ELETRICIDADE.pdf — pág. 41",img:IMG.bateria},
+ {p:"Em um circuito paralelo, se um dos resistores queimar (abrir), a resistência equivalente...",a:["Diminui","Passa a ser mais elevada","Não muda","Vira zero"],c:1,e:"Você sabia: com um resistor aberto, a Req do paralelo passa a ser mais elevada.",r:"AP ELETRICIDADE.pdf — pág. 56",img:IMG.paralelo3},
+ {p:"Na fig.50F, com o LED5 queimado (aberto), MT1 indica 9,6 V (pontos 1-3) e MT2 indica 9,6 V (pontos 3-4). Concluímos que...",a:["O resistor R5 está em curto","O LED5 está aberto, pois o resistor não provoca queda de tensão (não há corrente)","A bateria está fraca","O circuito funciona normalmente"],c:1,e:"Sem corrente, o resistor não trabalha (não provoca ddp): a tensão da fonte aparece inteira sobre o LED aberto.",r:"AP ELETRICIDADE.pdf — pág. 42",img:IMG.ledResistor}
+];
+
+/* ==================== MODOS / ESTADO ==================== */
+var TODAS=BANCO_FACIL.concat(BANCO_MEDIO).concat(BANCO_DIFICIL);
+var BANCOS=[BANCO_FACIL,BANCO_MEDIO,BANCO_DIFICIL];
+var MODOS={
+ facil:{nome:"🟢 Fácil (Iniciante)",classe:"mfacil",pts:10,qtd:33,seg:40,banco:BANCO_FACIL},
+ medio:{nome:"🟡 Médio (Intermediário)",classe:"mmedio",pts:20,qtd:40,seg:50,banco:BANCO_MEDIO},
+ dificil:{nome:"🔴 Difícil (Avançado)",classe:"mdificil",pts:30,qtd:40,seg:60,banco:BANCO_DIFICIL},
+ desafio:{nome:"🔵 Desafio (Misto)",classe:"mdesafio",pts:40,qtd:30,seg:45,banco:TODAS}
+};
+var REC_KEY="eqquiz_rec_v1",ERR_KEY="eqquiz_err_v1";
+var NOME="",SOM=true;
+var modoAtual=null,ordem=[],idx=0,acertos=0,pontos=0,respondida=false,opcoesAtuais=[];
+var errosSessao=[],lastRes=null;
+var tempoLimite=0,tempoRestante=0,timerId=null;
+
+function fmtT(s){s=Math.max(0,Math.floor(s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
+function embaralhar(arr){for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t;}return arr;}
+function mostrar(id){
+ ["tela-nome","tela-inicio","tela-quiz","tela-fim"].forEach(function(s){document.getElementById(s).classList.add("oculta");});
+ document.getElementById(id).classList.remove("oculta");
+ window.scrollTo(0,0);
+}
+/* ---- localStorage helpers ---- */
+function lsGet(k,d){try{var v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function carregarRec(){try{return JSON.parse(lsGet(REC_KEY,"{}"))||{};}catch(e){return {};}}
+function carregarErr(){try{return JSON.parse(lsGet(ERR_KEY,"[]"))||[];}catch(e){return [];}}
+function salvarErr(a){lsSet(ERR_KEY,JSON.stringify(a));}
+function chaveDe(q){for(var b=0;b<BANCOS.length;b++){var i=BANCOS[b].indexOf(q);if(i>=0)return b+":"+i;}return null;}
+function addErr(q){var k=chaveDe(q);if(!k)return;var a=carregarErr();if(a.indexOf(k)<0)a.push(k);salvarErr(a);}
+function remErr(q){var k=chaveDe(q);if(!k)return;salvarErr(carregarErr().filter(function(x){return x!==k;}));}
+function questoesErradas(){return carregarErr().map(function(k){var p=k.split(":");var b=BANCOS[+p[0]];return b?b[+p[1]]:null;}).filter(Boolean);}
+
+/* ---- sons ---- */
+var AC=null;
+function tom(f,at,d,type){var o=AC.createOscillator(),v=AC.createGain();o.type=type;o.frequency.value=f;
+ v.gain.setValueAtTime(0.0001,at);v.gain.exponentialRampToValueAtTime(0.12,at+0.015);v.gain.exponentialRampToValueAtTime(0.0001,at+d);
+ o.connect(v);v.connect(AC.destination);o.start(at);o.stop(at+d+0.05);}
+function bip(ok){if(!SOM)return;
+ try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();var t=AC.currentTime;
+  if(ok){tom(660,t,0.12,"sine");tom(880,t+0.1,0.16,"sine");}
+  else{tom(300,t,0.18,"square");tom(200,t+0.13,0.22,"square");}
+ }catch(e){}}
+function somToggle(){SOM=!SOM;lsSet("eqquiz_som",SOM?"1":"0");if(SOM)bip(true);atualizaSom();}
+function atualizaSom(){document.querySelectorAll(".somtoggle").forEach(function(b){b.textContent=SOM?"🔊 Sons: ligados":"🔇 Sons: desligados";});}
+
+/* ---- nome / entrada ---- */
+function entrar(){
+ var v=document.getElementById("inpNome").value.trim();
+ NOME=v||"Aluno";
+ lsSet("eqquiz_nome",NOME);
+ document.getElementById("ola").textContent="Olá, "+NOME+"! Escolha o seu nível:";
+ infosInicio();
+ mostrar("tela-inicio");
+}
+
+/* ---- tela inicial ---- */
+function infosInicio(){
+ var r=carregarRec();
+ Object.keys(MODOS).forEach(function(k){
+  var m=MODOS[k],rec=r[k];
+  var txt=m.qtd+" por partida · banco com "+m.banco.length+" · +"+m.pts+" pts · ⏱ "+fmtT(m.qtd*m.seg);
+  if(rec&&rec.pct!==undefined)txt+=" · 🏆 "+rec.pct+"%";
+  document.getElementById("info-"+k).textContent=txt;
+ });
+ document.getElementById("btnRevTudo").textContent="📕 Revisar erros salvos ("+carregarErr().length+")";
+}
+
+/* ---- motor do quiz ---- */
+function iniciar(chave){comecar(MODOS[chave].banco,MODOS[chave]);}
+function revisarSalvos(){var l=questoesErradas();if(!l.length){alert("Nenhum erro salvo. 🎉");return;}revisar(l);}
+function revisarSessao(){revisar(errosSessao);}
+function revisar(lista){comecar(lista,{nome:"🔄 Revisão de erros",classe:"mrevisao",pts:0,seg:60,revisao:true});}
+function comecar(lista,cfg){
+ if(timerId)clearInterval(timerId);
+ modoAtual=cfg;
+ ordem=embaralhar(lista.slice());
+ if(cfg.qtd)ordem=ordem.slice(0,Math.min(cfg.qtd,ordem.length));
+ idx=0;acertos=0;pontos=0;errosSessao=[];
+ tempoLimite=ordem.length*cfg.seg;tempoRestante=tempoLimite;
+ var cm=document.getElementById("chipModo");
+ cm.textContent=modoAtual.nome;cm.className="chip "+modoAtual.classe;
+ document.getElementById("tempo").textContent="⏱ "+fmtT(tempoRestante);
+ mostrar("tela-quiz");
+ renderQuestao();
+ timerId=setInterval(function(){
+  tempoRestante--;
+  document.getElementById("tempo").textContent="⏱ "+fmtT(tempoRestante);
+  if(tempoRestante<=0){clearInterval(timerId);fim(true);}
+ },1000);
+}
+function renderQuestao(){
+ var q=ordem[idx];
+ respondida=false;opcoesAtuais=[];
+ for(var i=0;i<q.a.length;i++)opcoesAtuais.push({t:q.a[i],certa:(i===q.c)});
+ embaralhar(opcoesAtuais);
+ document.getElementById("contador").textContent="Questão "+(idx+1)+"/"+ordem.length;
+ document.getElementById("pontos").textContent=pontos+" pts";
+ document.getElementById("barra").style.width=(idx/ordem.length*100)+"%";
+ var qi=document.getElementById("quizImg");
+ if(q.img){qi.innerHTML=q.img;qi.classList.remove("oculta");}else{qi.innerHTML="";qi.classList.add("oculta");}
+ document.getElementById("pergunta").textContent=q.p;
+ document.getElementById("feedback").classList.add("oculta");
+ document.getElementById("btnProxima").classList.add("oculta");
+ var letras=["A","B","C","D"];
+ var caixa=document.getElementById("opcoes");caixa.innerHTML="";
+ for(var k=0;k<opcoesAtuais.length;k++){
+  var b=document.createElement("button");
+  b.className="opcao";
+  b.innerHTML='<span class="letra">'+letras[k]+'</span><span>'+opcoesAtuais[k].t+'</span>';
+  b.onclick=(function(pos){return function(){responder(pos);};})(k);
+  caixa.appendChild(b);
+ }
+}
+function responder(k){
+ if(respondida)return;
+ respondida=true;
+ var q=ordem[idx];
+ var acertou=opcoesAtuais[k].certa;
+ if(acertou){acertos++;pontos+=modoAtual.pts;remErr(q);}
+ else{errosSessao.push(q);addErr(q);}
+ bip(acertou);
+ var botoes=document.querySelectorAll("#opcoes .opcao");
+ var textoCerta="";
+ for(var j=0;j<opcoesAtuais.length;j++){
+  botoes[j].disabled=true;
+  if(opcoesAtuais[j].certa){botoes[j].classList.add("certa");textoCerta=opcoesAtuais[j].t;}
+  else if(j===k)botoes[j].classList.add("errada");
+  else botoes[j].classList.add("fraca");
+ }
+ var fb=document.getElementById("feedback");
+ fb.classList.remove("oculta");
+ fb.innerHTML='<div class="status '+(acertou?"ok":"erro")+'">'+(acertou?"✔ Você acertou!"+(modoAtual.pts?" (+"+modoAtual.pts+" pts)":""):"✘ Você errou.")+'</div>'+
+  '<div><b>Resposta correta:</b> '+textoCerta+'</div>'+
+  '<div style="margin-top:6px">'+q.e+'</div>'+
+  '<div class="ref">📖 Referência: '+q.r+'</div>';
+ document.getElementById("pontos").textContent=pontos+" pts";
+ document.getElementById("barra").style.width=((idx+1)/ordem.length*100)+"%";
+ var bp=document.getElementById("btnProxima");
+ bp.classList.remove("oculta");
+ bp.textContent=(idx===ordem.length-1)?"✅ VER RESULTADO":"PRÓXIMA ➜";
+}
+function proxima(){
+ idx++;
+ if(idx>=ordem.length)fim(false);
+ else renderQuestao();
+}
+function classif(p){
+ if(p>=90)return"⚡ Mestre da Eletricidade";
+ if(p>=70)return"👏 Muito bom";
+ if(p>=50)return"📘 Bom começo";
+ return"💪 Continue estudando";
+}
+function fim(esgotado){
+ if(timerId)clearInterval(timerId);
+ var chave=null;
+ Object.keys(MODOS).forEach(function(k){if(MODOS[k]===modoAtual)chave=k;});
+ var total=ordem.length,erros=total-acertos;
+ var pct=total?Math.round(acertos/total*100):0;
+ var usado=tempoLimite-tempoRestante;
+ var recTxt="";
+ if(!modoAtual.revisao&&chave){
+  var r=carregarRec();var ant=r[chave];
+  var novo=!ant||pct>ant.pct||(pct===ant.pct&&pontos>(ant.pts||0));
+  if(novo){r[chave]={pct:pct,pts:pontos};lsSet(REC_KEY,JSON.stringify(r));}
+  recTxt=novo?"🏆 NOVO RECORDE DO MODO!":"🏆 Recorde do modo: "+r[chave].pct+"% · "+r[chave].pts+" pts";
+ }else{
+  recTxt="🔄 Partida de revisão — não conta para recorde.";
+ }
+ var clas=classif(pct);
+ document.getElementById("fimAluno").textContent="Aluno(a): "+NOME;
+ document.getElementById("fimModo").textContent="Modo: "+modoAtual.nome+(esgotado?" · ⏰ tempo esgotado!":"");
+ document.getElementById("fimPct").textContent=pct+"%";
+ document.getElementById("fimClassif").textContent=clas;
+ document.getElementById("fimRecorde").textContent=recTxt;
+ document.getElementById("fimAcertos").textContent=acertos;
+ document.getElementById("fimErros").textContent=erros;
+ document.getElementById("fimPontos").textContent=pontos;
+ document.getElementById("fimTempo").textContent=fmtT(usado);
+ document.getElementById("btnNovamente").classList.toggle("oculta",!!modoAtual.revisao);
+ var bs=document.getElementById("btnRevSessao");
+ if(errosSessao.length){bs.classList.remove("oculta");bs.textContent="🔄 REVISAR ERROS DA PARTIDA ("+errosSessao.length+")";}
+ else bs.classList.add("oculta");
+ lastRes={nome:NOME,modo:modoAtual.nome,pct:pct,clas:clas,acertos:acertos,erros:erros,pontos:pontos,usado:usado,rec:recTxt,data:new Date().toLocaleString("pt-BR")};
+ mostrar("tela-fim");
+ infosInicio();
+}
+function jogarNovamente(){
+ var chave=null;
+ Object.keys(MODOS).forEach(function(k){if(MODOS[k]===modoAtual)chave=k;});
+ if(chave)iniciar(chave);
+}
+function voltarInicio(){if(timerId)clearInterval(timerId);infosInicio();mostrar("tela-inicio");}
+
+/* ---- exportar resultado em PNG ---- */
+function exportarPNG(){
+ var r=lastRes;if(!r)return;
+ var c=document.createElement("canvas");c.width=900;c.height=1150;
+ var x=c.getContext("2d");
+ x.fillStyle="#0b1020";x.fillRect(0,0,900,1150);
+ x.strokeStyle="rgba(120,150,255,.3)";x.lineWidth=3;x.strokeRect(22,22,856,1106);
+ x.textAlign="center";
+ x.fillStyle="#f7c948";x.font="bold 46px system-ui";x.fillText("ELETRIC QUIZ",450,110);
+ x.fillStyle="#8fa0c2";x.font="24px system-ui";x.fillText("Eletricidade e Eletrônica Básica",450,150);
+ x.fillStyle="#e7ecf7";x.font="bold 30px system-ui";x.fillText(r.modo,450,225);
+ x.font="24px system-ui";x.fillStyle="#8fa0c2";
+ x.fillText("Aluno(a): "+r.nome,450,268);
+ x.fillText(r.data,450,302);
+ x.fillStyle="#f7c948";x.font="bold 110px system-ui";x.fillText(r.pct+"%",450,445);
+ x.font="bold 30px system-ui";x.fillStyle="#e7ecf7";x.fillText(r.clas,450,495);
+ var itens=[["Acertos",String(r.acertos)],["Erros",String(r.erros)],["Pontos",String(r.pontos)],["Tempo",fmtT(r.usado)]];
+ for(var i=0;i<4;i++){
+  var cx=240+(i%2)*420,cy=610+Math.floor(i/2)*170;
+  x.fillStyle="#141d38";x.fillRect(cx-170,cy-80,340,150);
+  x.strokeStyle="rgba(120,150,255,.3)";x.lineWidth=2;x.strokeRect(cx-170,cy-80,340,150);
+  x.fillStyle="#e7ecf7";x.font="bold 44px system-ui";x.fillText(itens[i][1],cx,cy);
+  x.fillStyle="#8fa0c2";x.font="22px system-ui";x.fillText(itens[i][0],cx,cy+45);
+ }
+ x.fillStyle="#38bdf8";x.font="24px system-ui";x.fillText(r.rec,450,940);
+ x.fillStyle="#8fa0c2";x.font="18px system-ui";
+ x.fillText("Conteúdo baseado nas apostilas AP ELETRICIDADE.pdf e Apostila.pdf (Leiaut Carielo).",450,1030);
+ x.fillText("Material educacional — instalações reais exigem profissional qualificado.",450,1062);
+ var a=document.createElement("a");
+ a.download="resultado-eletric-quiz.png";
+ a.href=c.toDataURL("image/png");
+ a.click();
+}
+
+/* ---- inicialização ---- */
+NOME=lsGet("eqquiz_nome","");
+SOM=lsGet("eqquiz_som","1")!=="0";
+document.getElementById("inpNome").value=NOME;
+document.getElementById("inpNome").addEventListener("keydown",function(e){if(e.key==="Enter")entrar();});
+atualizaSom();
+infosInicio();
+</script>
+</body>
+</html>
